@@ -85,7 +85,7 @@
             transform: translateX(-50%);
             width: min(480px, 100vw);
             display: grid;
-            grid-template-columns: repeat(6, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 0;
             padding: 8px 10px 12px;
             background: rgba(8, 8, 8, 0.86);
@@ -672,6 +672,83 @@
             color: #000;
         }
 
+        .chat-shell {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-height: calc(100vh - 250px);
+        }
+
+        .chat-messages {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow-y: auto;
+            padding-right: 2px;
+        }
+
+        .chat-bubble {
+            max-width: 86%;
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid var(--line);
+            line-height: 1.45;
+            font-size: 14px;
+            backdrop-filter: blur(8px);
+            white-space: pre-wrap;
+        }
+
+        .chat-bubble.user {
+            align-self: flex-end;
+            background: rgba(255, 255, 255, 0.12);
+            border-color: var(--line-strong);
+        }
+
+        .chat-bubble.coach {
+            align-self: flex-start;
+            background: var(--bg-secondary);
+        }
+
+        .chat-input-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .chat-input {
+            flex: 1;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text);
+            padding: 12px 14px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .chat-input:focus {
+            border-color: var(--line-strong);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .chat-send {
+            border: 1px solid var(--line-strong);
+            border-radius: 12px;
+            width: 46px;
+            height: 46px;
+            background: var(--accent);
+            color: #000;
+            font-size: 20px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .chat-send:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
         /* Weekly Grid */
         .week-grid {
             display: grid;
@@ -809,7 +886,7 @@
             <div class="stats-row">
                 <div class="stat-box">
                     <div class="stat-value" id="habits-completed">0/0</div>
-                    <div class="stat-label">Привычки</div>
+                    <div class="stat-label">Фокус</div>
                 </div>
                 <div class="stat-box">
                     <div class="stat-value" id="challenges-completed">0</div>
@@ -830,17 +907,25 @@
             </div>
         </div>
 
-        <!-- Habits Screen -->
-        <div id="habits-screen" class="screen">
+        <!-- Chat Screen -->
+        <div id="chat-screen" class="screen">
             <div class="header">
-                <div class="logo">Привычки</div>
+                <div class="logo">Чат с Goggins</div>
             </div>
 
-            <div class="habit-list" id="habit-list">
-                <!-- Habits will be added here -->
+            <div class="chat-shell">
+                <div class="chat-messages" id="chat-messages"></div>
+                <form class="chat-input-row" onsubmit="sendChatMessage(event)">
+                    <input
+                        id="chat-input"
+                        class="chat-input"
+                        type="text"
+                        maxlength="400"
+                        placeholder="Напиши, что тебя ломает прямо сейчас..."
+                    >
+                    <button id="chat-send-btn" type="submit" class="chat-send">→</button>
+                </form>
             </div>
-
-            <button class="btn btn-secondary" onclick="addHabit()">➕ Добавить привычку</button>
         </div>
 
         <!-- Stats Screen -->
@@ -897,30 +982,6 @@
             </div>
         </div>
 
-        <!-- Premium Screen -->
-        <div id="premium-screen" class="screen">
-            <div class="header">
-                <div class="logo" style="color: var(--gold);">Premium</div>
-            </div>
-
-            <div class="streak-card" style="border-color: var(--gold);">
-                <div class="premium-badge">Premium</div>
-                <div style="font-size: 18px; font-weight: 600; margin-bottom: 20px;">Стань воином с Premium</div>
-                
-                <div style="text-align: left; margin-bottom: 20px;">
-                    <div style="margin-bottom: 12px;">✅ AI Чат 24/7 с личным коучем</div>
-                    <div style="margin-bottom: 12px;">✅ Генерация "будущей версии" себя</div>
-                    <div style="margin-bottom: 12px;">✅ Расширенная аналитика</div>
-                    <div style="margin-bottom: 12px;">✅ Эксклюзивные темы</div>
-                    <div>✅ Приоритетная поддержка</div>
-                </div>
-
-                <div style="font-size: 32px; font-weight: 700; margin: 20px 0;">299 ₽/мес</div>
-
-                <button class="btn btn-primary">Купить Premium</button>
-            </div>
-        </div>
-
         <!-- Profile Screen -->
         <div id="profile-screen" class="screen">
             <div class="header">
@@ -966,9 +1027,9 @@
             <span class="tab-icon">🏠</span>
             <span>Главная</span>
         </button>
-        <button type="button" class="tab-btn" data-screen="habits-screen" onclick="showScreen('habits-screen')">
-            <span class="tab-icon">💪</span>
-            <span>Привычки</span>
+        <button type="button" class="tab-btn" data-screen="chat-screen" onclick="showScreen('chat-screen')">
+            <span class="tab-icon">💬</span>
+            <span>Чат</span>
         </button>
         <button type="button" class="tab-btn" data-screen="stats-screen" onclick="showScreen('stats-screen')">
             <span class="tab-icon">📊</span>
@@ -981,10 +1042,6 @@
         <button type="button" class="tab-btn" data-screen="profile-screen" onclick="showScreen('profile-screen')">
             <span class="tab-icon">👤</span>
             <span>Профиль</span>
-        </button>
-        <button type="button" class="tab-btn" data-screen="premium-screen" onclick="showScreen('premium-screen')">
-            <span class="tab-icon">💎</span>
-            <span>Premium</span>
         </button>
     </nav>
 
@@ -1184,12 +1241,14 @@
             habits: [],
             achievements: [],
             isPremium: false,
+            chatHistory: [],
             challengesCompleted: 0,
             lastCheckDate: null,
             lastChallengeDate: null,
             onboardingCompleted: false,
             profile: { ...DEFAULT_PROFILE }
         };
+        let chatRequestPending = false;
         let onboardingStep = 1;
         let onboardingCanClose = false;
         const ONBOARDING_TOTAL_STEPS = 2;
@@ -1215,6 +1274,37 @@
                 return window.Telegram.WebApp;
             }
             return null;
+        }
+
+        function normalizeApiBase(url) {
+            return String(url || "").trim().replace(/\/+$/, "");
+        }
+
+        function getMiniAppApiBase() {
+            const queryBase = normalizeApiBase(new URLSearchParams(window.location.search).get("api_base") || "");
+            if (queryBase) {
+                return queryBase;
+            }
+
+            const tg = getTelegramWebApp();
+            if (tg) {
+                const initUnsafe = tg.initDataUnsafe || {};
+                const startParamBase = normalizeApiBase(initUnsafe.start_param || "");
+                if (startParamBase.startsWith("http://") || startParamBase.startsWith("https://")) {
+                    return startParamBase;
+                }
+            }
+
+            const override = normalizeApiBase(localStorage.getItem("nofap_api_base") || "");
+            if (override) {
+                return override;
+            }
+
+            if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+                return "http://127.0.0.1:8081";
+            }
+
+            return "";
         }
 
         function getPathName(pathKey) {
@@ -1247,6 +1337,18 @@
             const habitKey = String(profile.habitKey || "").trim();
             const customHabit = String(profile.customHabit || "").trim();
             const customDuration = String(profile.customDuration || "").trim() || DEFAULT_DURATION_TEXT;
+            const chatHistoryRaw = Array.isArray(source.chatHistory) ? source.chatHistory : [];
+            const chatHistory = chatHistoryRaw
+                .map(item => {
+                    const role = item && item.role === "user" ? "user" : "coach";
+                    const text = item && typeof item.text === "string" ? item.text.trim() : "";
+                    if (!text) {
+                        return null;
+                    }
+                    return { role, text };
+                })
+                .filter(Boolean)
+                .slice(-80);
 
             return {
                 streak: Number(source.streak) || 0,
@@ -1255,6 +1357,7 @@
                 habits: Array.isArray(source.habits) ? source.habits : [],
                 achievements: Array.isArray(source.achievements) ? source.achievements : [],
                 isPremium: Boolean(source.isPremium),
+                chatHistory,
                 challengesCompleted: Number(source.challengesCompleted) || 0,
                 lastCheckDate: source.lastCheckDate || null,
                 lastChallengeDate: source.lastChallengeDate || null,
@@ -1676,8 +1779,161 @@
             });
         }
 
+        function escapeHtml(text) {
+            return String(text)
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+
+        function ensureChatWelcome() {
+            if (Array.isArray(userData.chatHistory) && userData.chatHistory.length > 0) {
+                return;
+            }
+
+            const name = userData.profile && userData.profile.name ? userData.profile.name : "боец";
+            userData.chatHistory = [
+                {
+                    role: "coach",
+                    text: `${name}, хватит искать оправдания. Здесь только дисциплина, упорный труд и действие. Пиши, где тебя ломает.`
+                }
+            ];
+        }
+
+        function renderChatMessages() {
+            const chatMessages = document.getElementById("chat-messages");
+            if (!chatMessages) {
+                return;
+            }
+
+            ensureChatWelcome();
+            chatMessages.innerHTML = userData.chatHistory.map(message => `
+                <div class="chat-bubble ${message.role}">
+                    ${escapeHtml(message.text)}
+                </div>
+            `).join("");
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        async function requestCoachReplyFromApi(message) {
+            const apiBase = getMiniAppApiBase();
+            if (!apiBase) {
+                throw new Error("api_base_missing");
+            }
+            if (window.location.protocol === "https:" && apiBase.startsWith("http://")) {
+                throw new Error("mixed_content_blocked");
+            }
+            const url = `${apiBase}/api/chat`;
+            const duration = getDurationLabel(
+                userData.profile.durationKey || DEFAULT_DURATION_KEY,
+                userData.profile.customDuration || DEFAULT_DURATION_TEXT
+            );
+            const history = Array.isArray(userData.chatHistory) ? userData.chatHistory.slice(-12) : [];
+
+            const payload = {
+                message,
+                profile: {
+                    name: userData.profile.name || "",
+                    goal: userData.profile.goal || "",
+                    duration
+                },
+                stats: {
+                    streak: Number(userData.streak) || 0,
+                    total_days: Number(userData.totalDays) || 0,
+                    challenges_completed: Number(userData.challengesCompleted) || 0
+                },
+                history
+            };
+
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
+
+            let data = null;
+            try {
+                data = await response.json();
+            } catch (_) {
+                // ignore parse errors
+            }
+
+            if (!response.ok || !data || !data.ok) {
+                const serverMessage = data && data.reply ? String(data.reply) : "";
+                if (serverMessage) {
+                    return serverMessage;
+                }
+                throw new Error(`chat_request_failed_${response.status}`);
+            }
+
+            return String(data.reply || "").trim() || "❌ Пустой ответ AI. Попробуй еще раз.";
+        }
+
+        async function sendChatMessage(event) {
+            if (event) {
+                event.preventDefault();
+            }
+
+            const input = document.getElementById("chat-input");
+            const sendButton = document.getElementById("chat-send-btn");
+            if (!input) {
+                return;
+            }
+            if (chatRequestPending) {
+                return;
+            }
+
+            const text = input.value.trim();
+            if (!text) {
+                return;
+            }
+
+            chatRequestPending = true;
+            if (sendButton) {
+                sendButton.disabled = true;
+            }
+            userData.chatHistory.push({ role: "user", text });
+            userData.chatHistory.push({ role: "coach", text: "..." });
+            userData.chatHistory = userData.chatHistory.slice(-80);
+            input.value = "";
+            updateUI();
+
+            try {
+                const reply = await requestCoachReplyFromApi(text);
+                userData.chatHistory[userData.chatHistory.length - 1] = { role: "coach", text: reply };
+            } catch (error) {
+                let errorText = "❌ Не удалось получить ответ AI. Проверь, что бот запущен и Mini App API доступен.";
+                if (error && error.message === "api_base_missing") {
+                    errorText = "❌ Не указан API backend для Mini App. Для локального теста открой http://localhost:8000. Для GitHub Pages нужен параметр ?api_base=https://твой-backend.";
+                } else if (error && error.message === "mixed_content_blocked") {
+                    errorText = "❌ Mini App открыт по HTTPS, а API указан по HTTP. Браузер блокирует такой запрос. Нужен HTTPS backend.";
+                } else if (error && /Failed to fetch/i.test(String(error.message || ""))) {
+                    errorText = "❌ API недоступен по сети. Проверь адрес backend и CORS.";
+                }
+                userData.chatHistory[userData.chatHistory.length - 1] = {
+                    role: "coach",
+                    text: errorText
+                };
+            } finally {
+                chatRequestPending = false;
+                if (sendButton) {
+                    sendButton.disabled = false;
+                }
+            }
+
+            updateUI();
+            input.focus();
+        }
+
         function renderHabits() {
             const list = document.getElementById("habit-list");
+            if (!list) {
+                return;
+            }
             if (!userData.habits.length) {
                 list.innerHTML = `
                     <div class="habit-item">
@@ -1735,6 +1991,7 @@
             updateProfileUI();
             renderHabits();
             renderAchievements();
+            renderChatMessages();
             localStorage.setItem("nofap_user", JSON.stringify(userData));
         }
 
@@ -1768,6 +2025,13 @@
             updateTabBar(screenId);
             if (screenId === "stats-screen") {
                 generateWeekGrid();
+            }
+            if (screenId === "chat-screen") {
+                renderChatMessages();
+                const input = document.getElementById("chat-input");
+                if (input) {
+                    setTimeout(() => input.focus(), 50);
+                }
             }
         }
 
@@ -1856,12 +2120,8 @@
 
         // Open AI chat
         function openAIChat() {
-            if (userData.isPremium) {
-                alert("💬 Скоро: AI чат будет доступен!");
-            } else {
-                closeCraving();
-                showScreen("premium-screen");
-            }
+            closeCraving();
+            showScreen("chat-screen");
         }
 
         // Daily quote rotation
