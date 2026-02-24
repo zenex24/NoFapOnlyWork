@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Сделай или сдохни</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        :root {
+            --bg-primary: #0D0D0D;
+            --bg-secondary: #1A1A1A;
+            --bg-card: #252525;
+            --accent: #FF4444;
+            --accent-hover: #FF6666;
+            --text: #FFFFFF;
+            --text-muted: #666666;
+            --success: #00C853;
+            --gold: #FFD700;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, var(--accent), #FF8888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tagline {
+            color: var(--text-muted);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-top: 5px;
+        }
+
+        /* Streak Counter */
+        .streak-card {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+            border: 1px solid #333;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .streak-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--gold));
+        }
+
+        .streak-number {
+            font-size: 72px;
+            font-weight: 900;
+            color: var(--accent);
+            line-height: 1;
+        }
+
+        .streak-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 10px;
+        }
+
+        .total-days {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 15px;
+        }
+
+        /* Buttons */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 16px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            text-decoration: none;
+            margin-bottom: 12px;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text);
+            border: 1px solid #333;
+        }
+
+        .btn-secondary:hover {
+            background: #333;
+        }
+
+        .btn-danger {
+            background: transparent;
+            color: var(--accent);
+            border: 2px solid var(--accent);
+        }
+
+        .btn-danger:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* Menu Grid */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .menu-item {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+
+        .menu-item:hover {
+            border-color: var(--accent);
+            transform: translateY(-3px);
+        }
+
+        .menu-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .menu-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* Quote */
+        .quote-section {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 3px solid var(--accent);
+        }
+
+        .quote-text {
+            font-size: 14px;
+            font-style: italic;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* Stats */
+        .stats-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            flex: 1;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 5px;
+        }
+
+        /* Premium Badge */
+        .premium-badge {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        /* Habit List */
+        .habit-list {
+            margin-bottom: 20px;
+        }
+
+        .habit-item {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .habit-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .habit-icon {
+            font-size: 24px;
+        }
+
+        .habit-name {
+            font-weight: 600;
+        }
+
+        .habit-check {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid #444;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .habit-check.completed {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        /* Weekly Grid */
+        .week-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .day-cell {
+            text-align: center;
+        }
+
+        .day-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .day-dot {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .day-dot.completed {
+            background: var(--success);
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        /* Screens */
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Main Screen -->
+        <div id="main-screen" class="screen active">
+            <div class="header">
+                <div class="logo">Сделай или сдохни</div>
+                <div class="tagline">Твой путь к победе</div>
+            </div>
+
+            <div class="streak-card fade-in">
+                <div class="streak-number pulse" id="streak-count">0</div>
+                <div class="streak-label">Дней без срыва</div>
+                <div class="total-days">Всего: <span id="total-count">0</span> дней</div>
+            </div>
+
+            <div class="stats-row">
+                <div class="stat-box">
+                    <div class="stat-value" id="habits-completed">0/0</div>
+                    <div class="stat-label">Привычки</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="challenges-completed">0</div>
+                    <div class="stat-label">Челленджи</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="achievements-count">0</div>
+                    <div class="stat-label">Значки</div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="checkDay()">✅ Отметить день</button>
+            <button class="btn btn-danger" onclick="showCraving()">⚠️ Хочу сорваться</button>
+
+            <div class="menu-grid">
+                <div class="menu-item" onclick="showScreen('habits-screen')">
+                    <div class="menu-icon">💪</div>
+                    <div class="menu-title">Привычки</div>
+                </div>
+                <div class="menu-item" onclick="showScreen('stats-screen')">
+                    <div class="menu-icon">📊</div>
+                    <div class="menu-title">Статистика</div>
+                </div>
+                <div class="menu-item" onclick="showScreen('achievements-screen')">
+                    <div class="menu-icon">🏆</div>
+                    <div class="menu-title">Достижения</div>
+                </div>
+                <div class="menu-item" onclick="showScreen('premium-screen')">
+                    <div class="menu-icon">💎</div>
+                    <div class="menu-title">Premium</div>
+                </div>
+            </div>
+
+            <div class="quote-section">
+                <div class="quote-text" id="daily-quote">"Ты слабак, если сдаешься. Ты воин, если идешь до конца."</div>
+            </div>
+        </div>
+
+        <!-- Habits Screen -->
+        <div id="habits-screen" class="screen">
+            <div class="header">
+                <button class="btn btn-secondary" onclick="showScreen('main-screen')" style="margin-bottom: 20px;">← Назад</button>
+                <div class="logo">Привычки</div>
+            </div>
+
+            <div class="habit-list" id="habit-list">
+                <!-- Habits will be added here -->
+            </div>
+
+            <button class="btn btn-secondary" onclick="addHabit()">➕ Добавить привычку</button>
+        </div>
+
+        <!-- Stats Screen -->
+        <div id="stats-screen" class="screen">
+            <div class="header">
+                <button class="btn btn-secondary" onclick="showScreen('main-screen')" style="margin-bottom: 20px;">← Назад</button>
+                <div class="logo">Статистика</div>
+            </div>
+
+            <div class="week-grid" id="week-grid">
+                <!-- Week days will be generated -->
+            </div>
+
+            <div class="streak-card">
+                <div class="streak-number" id="stats-streak">0</div>
+                <div class="streak-label">Лучший streak</div>
+            </div>
+        </div>
+
+        <!-- Achievements Screen -->
+        <div id="achievements-screen" class="screen">
+            <div class="header">
+                <button class="btn btn-secondary" onclick="showScreen('main-screen')" style="margin-bottom: 20px;">← Назад</button>
+                <div class="logo">Достижения</div>
+            </div>
+
+            <div class="habit-list" id="achievements-list">
+                <div class="habit-item">
+                    <div class="habit-info">
+                        <div class="habit-icon">🥉</div>
+                        <div class="habit-name">Новичок</div>
+                    </div>
+                    <div style="color: var(--text-muted); font-size: 12px;">3 дня</div>
+                </div>
+                <div class="habit-item">
+                    <div class="habit-info">
+                        <div class="habit-icon">🥈</div>
+                        <div class="habit-name">Воин</div>
+                    </div>
+                    <div style="color: var(--text-muted); font-size: 12px;">7 дней</div>
+                </div>
+                <div class="habit-item">
+                    <div class="habit-info">
+                        <div class="habit-icon">🥇</div>
+                        <div class="habit-name">Мастер</div>
+                    </div>
+                    <div style="color: var(--text-muted); font-size: 12px;">30 дней</div>
+                </div>
+                <div class="habit-item">
+                    <div class="habit-info">
+                        <div class="habit-icon">👑</div>
+                        <div class="habit-name">Легенда</div>
+                    </div>
+                    <div style="color: var(--text-muted); font-size: 12px;">100 дней</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Premium Screen -->
+        <div id="premium-screen" class="screen">
+            <div class="header">
+                <button class="btn btn-secondary" onclick="showScreen('main-screen')" style="margin-bottom: 20px;">← Назад</button>
+                <div class="logo" style="color: var(--gold);">Premium</div>
+            </div>
+
+            <div class="streak-card" style="border-color: var(--gold);">
+                <div class="premium-badge">Premium</div>
+                <div style="font-size: 18px; font-weight: 600; margin-bottom: 20px;">Стань воином с Premium</div>
+                
+                <div style="text-align: left; margin-bottom: 20px;">
+                    <div style="margin-bottom: 12px;">✅ AI Чат 24/7 с личным коучем</div>
+                    <div style="margin-bottom: 12px;">✅ Генерация "будущей версии" себя</div>
+                    <div style="margin-bottom: 12px;">✅ Расширенная аналитика</div>
+                    <div style="margin-bottom: 12px;">✅ Эксклюзивные темы</div>
+                    <div>✅ Приоритетная поддержка</div>
+                </div>
+
+                <div style="font-size: 32px; font-weight: 700; margin: 20px 0;">299 ₽/мес</div>
+
+                <button class="btn btn-primary" style="background: linear-gradient(135deg, #FFD700, #FFA500); color: #000;">Купить Premium</button>
+            </div>
+        </div>
+
+        <!-- Craving Modal -->
+        <div id="craving-modal" class="screen" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.95); z-index: 100; padding: 40px 20px;">
+            <div style="text-align: center;">
+                <div style="font-size: 48px; margin-bottom: 20px;">⚠️</div>
+                <div style="font-size: 24px; font-weight: 700; margin-bottom: 20px; color: var(--accent);">ТЫ ХОЧЕШЬ СОРВАТЬСЯ?</div>
+                <div class="quote-text" id="craving-quote" style="font-size: 16px; margin-bottom: 30px;">"Ты слабак, если сдаешься. Ты воин, если идешь до конца."</div>
+                
+                <button class="btn btn-primary" onclick="openAIChat()">💬 Поговорить с коучем</button>
+                <button class="btn btn-secondary" onclick="closeCraving()">✅ Я справлюсь</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data
+        let userData = {
+            streak: 0,
+            totalDays: 0,
+            habits: [],
+            achievements: [],
+            isPremium: false
+        };
+
+        // Quotes
+        const quotes = [
+            "Ты слабак, если сдаешься. Ты воин, если идешь до конца.",
+            "Боль временна. Гордость от того, что ты не сдался - навсегда.",
+            "Твой biggest враг - это ты сам. Победи себя.",
+            "Не сегодня. Никогда не сегодня.",
+            "Ты не хочешь сорваться. Ты хочешь быть слабым. Не поддавайся.",
+            "Каждый день без срыва - это победа. Будь воином.",
+            "Твои желания не определяют тебя. Твои действия определяют.",
+            "Сделай или сдохни. Выбирай."
+        ];
+
+        // Initialize
+        function init() {
+            // Load user data from localStorage
+            const saved = localStorage.getItem('nofap_user');
+            if (saved) {
+                userData = JSON.parse(saved);
+            } else {
+                // Default habits
+                userData.habits = [
+                    { id: 1, name: 'Не смотреть порно', icon: '🚫', completed: false },
+                    { id: 2, name: 'Тренировка', icon: '💪', completed: false },
+                    { id: 3, name: 'Медитация', icon: '🧘', completed: false },
+                    { id: 4, name: 'Холодный душ', icon: '🚿', completed: false }
+                ];
+            }
+            
+            updateUI();
+            generateWeekGrid();
+        }
+
+        // Update UI
+        function updateUI() {
+            document.getElementById('streak-count').textContent = userData.streak;
+            document.getElementById('total-count').textContent = userData.totalDays;
+            document.getElementById('habits-completed').textContent = 
+                userData.habits.filter(h => h.completed).length + '/' + userData.habits.length;
+            document.getElementById('achievements-count').textContent = userData.achievements.length;
+            
+            // Save to localStorage
+            localStorage.setItem('nofap_user', JSON.stringify(userData));
+        }
+
+        // Generate week grid
+        function generateWeekGrid() {
+            const days = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+            const weekGrid = document.getElementById('week-grid');
+            weekGrid.innerHTML = '';
+            
+            for (let i = 0; i < 7; i++) {
+                const completed = i < userData.streak % 7;
+                weekGrid.innerHTML += `
+                    <div class="day-cell">
+                        <div class="day-label">${days[i]}</div>
+                        <div class="day-dot ${completed ? 'completed' : ''}">${i < userData.streak % 7 ? '✓' : (i + 1)}</div>
+                    </div>
+                `;
+            }
+        }
+
+        // Show screen
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            
+            if (screenId === 'stats-screen') {
+                generateWeekGrid();
+            }
+        }
+
+        // Check day
+        function checkDay() {
+            userData.streak++;
+            userData.totalDays++;
+            userData.habits.forEach(h => h.completed = false);
+            
+            // Check achievements
+            if (userData.streak === 3 || userData.streak === 7 || userData.streak === 30 || userData.streak === 100) {
+                alert('🎉 Поздравляю! Ты получил новый значок!');
+            }
+            
+            updateUI();
+            generateWeekGrid();
+            
+            // Show success
+            alert('✅ День отмечен! Твой streak: ' + userData.streak);
+        }
+
+        // Toggle habit
+        function toggleHabit(id) {
+            const habit = userData.habits.find(h => h.id === id);
+            if (habit) {
+                habit.completed = !habit.completed;
+                updateUI();
+            }
+        }
+
+        // Add habit
+        function addHabit() {
+            const name = prompt('Введи название привычки:');
+            if (name) {
+                const id = userData.habits.length + 1;
+                userData.habits.push({ id, name, icon: '💪', completed: false });
+                updateUI();
+            }
+        }
+
+        // Show craving
+        function showCraving() {
+            const quote = quotes[Math.floor(Math.random() * quotes.length)];
+            document.getElementById('craving-quote').textContent = '"' + quote + '"';
+            showScreen('craving-modal');
+        }
+
+        // Close craving
+        function closeCraving() {
+            showScreen('main-screen');
+        }
+
+        // Open AI chat
+        function openAIChat() {
+            if (userData.isPremium) {
+                alert('💬 Скоро: AI чат будет доступен!');
+            } else {
+                showScreen('premium-screen');
+            }
+        }
+
+        // Daily quote rotation
+        function rotateQuote() {
+            const quote = quotes[Math.floor(Math.random() * quotes.length)];
+            document.getElementById('daily-quote').textContent = '"' + quote + '"';
+        }
+
+        // Initialize on load
+        init();
+        
+        // Rotate quote every 30 seconds
+        setInterval(rotateQuote, 30000);
+    </script>
+</body>
+</html>
