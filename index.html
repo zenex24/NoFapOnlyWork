@@ -391,6 +391,7 @@
 
             <button class="btn btn-primary" onclick="checkDay()">✅ Отметить день</button>
             <button class="btn btn-danger" onclick="showCraving()">⚠️ Хочу сорваться</button>
+            <button class="btn btn-secondary" onclick="completeDailyChallenge()">⚡ Челлендж выполнен</button>
 
             <div class="menu-grid">
                 <div class="menu-item" onclick="showScreen('habits-screen')">
@@ -525,13 +526,52 @@
     </div>
 
     <script>
+        const ACHIEVEMENT_CATALOG = [
+            { id: "streak_1", name: "Первый шаг", icon: "🎯", requirement: 1, type: "streak" },
+            { id: "streak_3", name: "Новичок", icon: "🥉", requirement: 3, type: "streak" },
+            { id: "streak_5", name: "Набираешь ход", icon: "⚔️", requirement: 5, type: "streak" },
+            { id: "streak_7", name: "Воин", icon: "🥈", requirement: 7, type: "streak" },
+            { id: "streak_10", name: "Железная неделя", icon: "🛡️", requirement: 10, type: "streak" },
+            { id: "streak_14", name: "2 недели без срыва", icon: "🔥", requirement: 14, type: "streak" },
+            { id: "streak_21", name: "Перезагрузка", icon: "🚀", requirement: 21, type: "streak" },
+            { id: "streak_30", name: "Мастер", icon: "🥇", requirement: 30, type: "streak" },
+            { id: "streak_45", name: "Стальная воля", icon: "🦾", requirement: 45, type: "streak" },
+            { id: "streak_60", name: "60 без срыва", icon: "💀", requirement: 60, type: "streak" },
+            { id: "streak_90", name: "90 дней чистоты", icon: "👊", requirement: 90, type: "streak" },
+            { id: "streak_120", name: "Режим зверя", icon: "🐺", requirement: 120, type: "streak" },
+            { id: "streak_180", name: "Полгода дисциплины", icon: "🏛️", requirement: 180, type: "streak" },
+            { id: "streak_365", name: "Легенда", icon: "👑", requirement: 365, type: "streak" },
+            { id: "total_7", name: "7 отмеченных дней", icon: "📆", requirement: 7, type: "total_days" },
+            { id: "total_30", name: "30 отмеченных дней", icon: "📈", requirement: 30, type: "total_days" },
+            { id: "total_100", name: "100 отмеченных дней", icon: "🏅", requirement: 100, type: "total_days" },
+            { id: "total_200", name: "200 отмеченных дней", icon: "🏆", requirement: 200, type: "total_days" },
+            { id: "challenge_5", name: "5 челленджей", icon: "⚡", requirement: 5, type: "challenges" },
+            { id: "challenge_20", name: "20 челленджей", icon: "🎖️", requirement: 20, type: "challenges" },
+            { id: "challenge_50", name: "50 челленджей", icon: "🧨", requirement: 50, type: "challenges" },
+            { id: "challenge_100", name: "100 челленджей", icon: "🏁", requirement: 100, type: "challenges" }
+        ];
+
+        const DAILY_CHALLENGES = [
+            "30 минут тренировки без оправданий",
+            "10 минут медитации и фокус на цели",
+            "Час глубокой работы без телефона",
+            "Холодный душ минимум 60 секунд",
+            "10 000 шагов за день",
+            "Без сахара весь день",
+            "Ложись спать до 23:00"
+        ];
+
         // Data
         let userData = {
             streak: 0,
+            bestStreak: 0,
             totalDays: 0,
             habits: [],
             achievements: [],
-            isPremium: false
+            isPremium: false,
+            challengesCompleted: 0,
+            lastCheckDate: null,
+            lastChallengeDate: null
         };
 
         // Quotes
@@ -546,50 +586,128 @@
             "Сделай или сдохни. Выбирай."
         ];
 
+        function todayKey() {
+            return new Date().toISOString().slice(0, 10);
+        }
+
+        function normalizeUserData(raw) {
+            return {
+                streak: Number(raw.streak) || 0,
+                bestStreak: Number(raw.bestStreak) || 0,
+                totalDays: Number(raw.totalDays) || 0,
+                habits: Array.isArray(raw.habits) ? raw.habits : [],
+                achievements: Array.isArray(raw.achievements) ? raw.achievements : [],
+                isPremium: Boolean(raw.isPremium),
+                challengesCompleted: Number(raw.challengesCompleted) || 0,
+                lastCheckDate: raw.lastCheckDate || null,
+                lastChallengeDate: raw.lastChallengeDate || null
+            };
+        }
+
         // Initialize
         function init() {
-            // Load user data from localStorage
-            const saved = localStorage.getItem('nofap_user');
+            const saved = localStorage.getItem("nofap_user");
             if (saved) {
-                userData = JSON.parse(saved);
+                userData = normalizeUserData(JSON.parse(saved));
             } else {
-                // Default habits
                 userData.habits = [
-                    { id: 1, name: 'Не смотреть порно', icon: '🚫', completed: false },
-                    { id: 2, name: 'Тренировка', icon: '💪', completed: false },
-                    { id: 3, name: 'Медитация', icon: '🧘', completed: false },
-                    { id: 4, name: 'Холодный душ', icon: '🚿', completed: false }
+                    { id: 1, name: "Не смотреть порно", icon: "🚫", completed: false },
+                    { id: 2, name: "Тренировка", icon: "💪", completed: false },
+                    { id: 3, name: "Медитация", icon: "🧘", completed: false },
+                    { id: 4, name: "Холодный душ", icon: "🚿", completed: false }
                 ];
             }
-            
+
+            syncAchievements();
             updateUI();
             generateWeekGrid();
         }
 
+        function achievementProgress(achievement) {
+            if (achievement.type === "streak") {
+                return userData.streak;
+            }
+            if (achievement.type === "total_days") {
+                return userData.totalDays;
+            }
+            return userData.challengesCompleted;
+        }
+
+        function syncAchievements() {
+            const unlocked = [];
+            for (const achievement of ACHIEVEMENT_CATALOG) {
+                const reached = achievementProgress(achievement) >= achievement.requirement;
+                const hasAchievement = userData.achievements.includes(achievement.id);
+                if (reached && !hasAchievement) {
+                    userData.achievements.push(achievement.id);
+                    unlocked.push(achievement);
+                }
+            }
+            return unlocked;
+        }
+
+        function renderHabits() {
+            const list = document.getElementById("habit-list");
+            list.innerHTML = userData.habits.map(habit => `
+                <div class="habit-item">
+                    <div class="habit-info">
+                        <div class="habit-icon">${habit.icon}</div>
+                        <div class="habit-name">${habit.name}</div>
+                    </div>
+                    <div class="habit-check ${habit.completed ? "completed" : ""}" onclick="toggleHabit(${habit.id})">
+                        ${habit.completed ? "✓" : ""}
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        function renderAchievements() {
+            const list = document.getElementById("achievements-list");
+            list.innerHTML = ACHIEVEMENT_CATALOG.map(achievement => {
+                const unlocked = userData.achievements.includes(achievement.id);
+                const progress = Math.min(achievementProgress(achievement), achievement.requirement);
+                return `
+                    <div class="habit-item" style="${unlocked ? "border: 1px solid var(--accent);" : "opacity: 0.6;"}">
+                        <div class="habit-info">
+                            <div class="habit-icon">${achievement.icon}</div>
+                            <div class="habit-name">${achievement.name}</div>
+                        </div>
+                        <div style="color: var(--text-muted); font-size: 12px;">
+                            ${unlocked ? "Открыто" : `${progress}/${achievement.requirement}`}
+                        </div>
+                    </div>
+                `;
+            }).join("");
+        }
+
         // Update UI
         function updateUI() {
-            document.getElementById('streak-count').textContent = userData.streak;
-            document.getElementById('total-count').textContent = userData.totalDays;
-            document.getElementById('habits-completed').textContent = 
-                userData.habits.filter(h => h.completed).length + '/' + userData.habits.length;
-            document.getElementById('achievements-count').textContent = userData.achievements.length;
-            
-            // Save to localStorage
-            localStorage.setItem('nofap_user', JSON.stringify(userData));
+            document.getElementById("streak-count").textContent = userData.streak;
+            document.getElementById("total-count").textContent = userData.totalDays;
+            document.getElementById("stats-streak").textContent = userData.bestStreak;
+            document.getElementById("habits-completed").textContent =
+                `${userData.habits.filter(h => h.completed).length}/${userData.habits.length}`;
+            document.getElementById("challenges-completed").textContent = userData.challengesCompleted;
+            document.getElementById("achievements-count").textContent = userData.achievements.length;
+
+            renderHabits();
+            renderAchievements();
+            localStorage.setItem("nofap_user", JSON.stringify(userData));
         }
 
         // Generate week grid
         function generateWeekGrid() {
-            const days = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
-            const weekGrid = document.getElementById('week-grid');
-            weekGrid.innerHTML = '';
-            
+            const days = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
+            const weekGrid = document.getElementById("week-grid");
+            weekGrid.innerHTML = "";
+
+            const streakInWeek = userData.streak === 0 ? 0 : (userData.streak % 7 || 7);
             for (let i = 0; i < 7; i++) {
-                const completed = i < userData.streak % 7;
+                const completed = i < streakInWeek;
                 weekGrid.innerHTML += `
                     <div class="day-cell">
                         <div class="day-label">${days[i]}</div>
-                        <div class="day-dot ${completed ? 'completed' : ''}">${i < userData.streak % 7 ? '✓' : (i + 1)}</div>
+                        <div class="day-dot ${completed ? "completed" : ""}">${completed ? "✓" : (i + 1)}</div>
                     </div>
                 `;
             }
@@ -597,82 +715,112 @@
 
         // Show screen
         function showScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-            
-            if (screenId === 'stats-screen') {
+            document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+            document.getElementById(screenId).classList.add("active");
+            if (screenId === "stats-screen") {
                 generateWeekGrid();
             }
         }
 
         // Check day
         function checkDay() {
-            userData.streak++;
-            userData.totalDays++;
-            userData.habits.forEach(h => h.completed = false);
-            
-            // Check achievements
-            if (userData.streak === 3 || userData.streak === 7 || userData.streak === 30 || userData.streak === 100) {
-                alert('🎉 Поздравляю! Ты получил новый значок!');
+            if (userData.lastCheckDate === todayKey()) {
+                alert("Сегодня ты уже отметил прогресс. Возвращайся завтра.");
+                return;
             }
-            
+
+            userData.streak += 1;
+            userData.bestStreak = Math.max(userData.bestStreak, userData.streak);
+            userData.totalDays += 1;
+            userData.lastCheckDate = todayKey();
+            userData.habits.forEach(h => {
+                h.completed = false;
+            });
+
+            const unlocked = syncAchievements();
             updateUI();
             generateWeekGrid();
-            
-            // Show success
-            alert('✅ День отмечен! Твой streak: ' + userData.streak);
+
+            let text = `✅ День отмечен! Твой streak: ${userData.streak}`;
+            if (unlocked.length > 0) {
+                text += `\n\n🎉 Новый значок: ${unlocked.map(item => `${item.icon} ${item.name}`).join(", ")}`;
+            }
+            alert(text);
+        }
+
+        function completeDailyChallenge() {
+            if (userData.lastChallengeDate === todayKey()) {
+                alert("Челлендж на сегодня уже засчитан.");
+                return;
+            }
+
+            const challenge = DAILY_CHALLENGES[new Date().getDate() % DAILY_CHALLENGES.length];
+            userData.challengesCompleted += 1;
+            userData.lastChallengeDate = todayKey();
+
+            const unlocked = syncAchievements();
+            updateUI();
+
+            let text = `⚡ Челлендж выполнен: ${challenge}`;
+            if (unlocked.length > 0) {
+                text += `\n\n🎉 Новый значок: ${unlocked.map(item => `${item.icon} ${item.name}`).join(", ")}`;
+            }
+            alert(text);
         }
 
         // Toggle habit
         function toggleHabit(id) {
             const habit = userData.habits.find(h => h.id === id);
-            if (habit) {
-                habit.completed = !habit.completed;
-                updateUI();
+            if (!habit) {
+                return;
             }
+
+            habit.completed = !habit.completed;
+            updateUI();
         }
 
         // Add habit
         function addHabit() {
-            const name = prompt('Введи название привычки:');
-            if (name) {
-                const id = userData.habits.length + 1;
-                userData.habits.push({ id, name, icon: '💪', completed: false });
-                updateUI();
+            const name = prompt("Введи название привычки:");
+            if (!name || !name.trim()) {
+                return;
             }
+
+            const nextId = userData.habits.length
+                ? Math.max(...userData.habits.map(h => h.id)) + 1
+                : 1;
+            userData.habits.push({ id: nextId, name: name.trim(), icon: "💪", completed: false });
+            updateUI();
         }
 
         // Show craving
         function showCraving() {
             const quote = quotes[Math.floor(Math.random() * quotes.length)];
-            document.getElementById('craving-quote').textContent = '"' + quote + '"';
-            showScreen('craving-modal');
+            document.getElementById("craving-quote").textContent = `"${quote}"`;
+            showScreen("craving-modal");
         }
 
         // Close craving
         function closeCraving() {
-            showScreen('main-screen');
+            showScreen("main-screen");
         }
 
         // Open AI chat
         function openAIChat() {
             if (userData.isPremium) {
-                alert('💬 Скоро: AI чат будет доступен!');
+                alert("💬 Скоро: AI чат будет доступен!");
             } else {
-                showScreen('premium-screen');
+                showScreen("premium-screen");
             }
         }
 
         // Daily quote rotation
         function rotateQuote() {
             const quote = quotes[Math.floor(Math.random() * quotes.length)];
-            document.getElementById('daily-quote').textContent = '"' + quote + '"';
+            document.getElementById("daily-quote").textContent = `"${quote}"`;
         }
 
-        // Initialize on load
         init();
-        
-        // Rotate quote every 30 seconds
         setInterval(rotateQuote, 30000);
     </script>
 </body>
