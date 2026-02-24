@@ -6,25 +6,30 @@
     <title>Сделай или сдохни</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: "Manrope", system-ui, -apple-system, sans-serif;
         }
 
         :root {
-            --bg-primary: #0D0D0D;
-            --bg-secondary: #1A1A1A;
-            --bg-card: #252525;
-            --accent: #FF4444;
-            --accent-hover: #FF6666;
-            --text: #FFFFFF;
-            --text-muted: #666666;
-            --success: #00C853;
-            --gold: #FFD700;
+            --bg-primary: #040404;
+            --bg-secondary: rgba(8, 8, 8, 0.68);
+            --bg-card: rgba(12, 12, 12, 0.84);
+            --accent: #ffffff;
+            --accent-hover: #e8e8e8;
+            --text: #f7f7f7;
+            --text-muted: #a4a4a4;
+            --success: #ffffff;
+            --gold: #ffffff;
+            --line: rgba(255, 255, 255, 0.16);
+            --line-strong: rgba(255, 255, 255, 0.32);
+            --photo-url: url("./assets/user-photo.png");
+            --photo-size: clamp(440px, 92vw, 980px);
+            --photo-y: 58%;
         }
 
         body {
@@ -32,51 +37,133 @@
             color: var(--text);
             min-height: 100vh;
             overflow-x: hidden;
+            position: relative;
+        }
+
+        body.onboarding-open {
+            overflow: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image:
+                radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1), transparent 52%),
+                linear-gradient(to bottom, rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0.58)),
+                var(--photo-url);
+            background-size: 100% 100%, 100% 100%, var(--photo-size) auto;
+            background-repeat: no-repeat, no-repeat, no-repeat;
+            background-position: center, center, center var(--photo-y);
+            filter: grayscale(1) contrast(1.08) brightness(0.72);
+            z-index: -2;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.42));
+            z-index: -1;
+            pointer-events: none;
         }
 
         .container {
             max-width: 480px;
             margin: 0 auto;
             padding: 20px;
+            padding-bottom: 96px;
             min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        .mobile-tabs {
+            position: fixed;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: min(480px, 100vw);
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0;
+            padding: 8px 10px 12px;
+            background: rgba(8, 8, 8, 0.86);
+            border-top: 1px solid var(--line);
+            backdrop-filter: blur(10px);
+            z-index: 220;
+        }
+
+        .tab-btn {
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            padding: 6px 4px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            cursor: pointer;
+        }
+
+        .tab-btn .tab-icon {
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        .tab-btn.active {
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .tab-btn:active {
+            transform: translateY(1px);
         }
 
         /* Header */
         .header {
             text-align: center;
-            padding: 20px 0;
+            padding: 16px 0;
             margin-bottom: 20px;
         }
 
         .logo {
-            font-size: 28px;
-            font-weight: 900;
+            font-family: "Bebas Neue", sans-serif;
+            font-size: 42px;
+            font-weight: 400;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            background: linear-gradient(135deg, var(--accent), #FF8888);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            letter-spacing: 1.8px;
+            color: var(--accent);
+            text-shadow: 0 0 28px rgba(255, 255, 255, 0.18);
         }
 
         .tagline {
             color: var(--text-muted);
-            font-size: 12px;
+            font-size: 11px;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-top: 5px;
+            letter-spacing: 3.2px;
+            margin-top: 2px;
         }
 
         /* Streak Counter */
         .streak-card {
             background: var(--bg-secondary);
-            border-radius: 20px;
+            border-radius: 22px;
             padding: 30px;
             text-align: center;
             margin-bottom: 20px;
-            border: 1px solid #333;
+            border: 1px solid var(--line);
             position: relative;
             overflow: hidden;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
         }
 
         .streak-card::before {
@@ -85,22 +172,24 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent), var(--gold));
+            height: 1px;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.65), transparent);
         }
 
         .streak-number {
             font-size: 72px;
-            font-weight: 900;
+            font-weight: 800;
             color: var(--accent);
             line-height: 1;
+            letter-spacing: -2px;
+            text-shadow: 0 0 32px rgba(255, 255, 255, 0.2);
         }
 
         .streak-label {
-            font-size: 14px;
+            font-size: 12px;
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 2.2px;
             margin-top: 10px;
         }
 
@@ -115,20 +204,23 @@
             display: block;
             width: 100%;
             padding: 16px 24px;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
             text-align: center;
             text-decoration: none;
             margin-bottom: 12px;
+            border: 1px solid transparent;
+            letter-spacing: 0.3px;
         }
 
         .btn-primary {
             background: var(--accent);
-            color: white;
+            color: #000;
+            border-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
         }
 
         .btn-primary:hover {
@@ -139,55 +231,23 @@
         .btn-secondary {
             background: var(--bg-card);
             color: var(--text);
-            border: 1px solid #333;
+            border: 1px solid var(--line);
         }
 
         .btn-secondary:hover {
-            background: #333;
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
         }
 
         .btn-danger {
-            background: transparent;
-            color: var(--accent);
-            border: 2px solid var(--accent);
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text);
+            border: 1px solid var(--line-strong);
         }
 
         .btn-danger:hover {
-            background: var(--accent);
-            color: white;
-        }
-
-        /* Menu Grid */
-        .menu-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .menu-item {
-            background: var(--bg-secondary);
-            border-radius: 16px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: 1px solid transparent;
-        }
-
-        .menu-item:hover {
-            border-color: var(--accent);
-            transform: translateY(-3px);
-        }
-
-        .menu-icon {
-            font-size: 32px;
-            margin-bottom: 8px;
-        }
-
-        .menu-title {
-            font-size: 14px;
-            font-weight: 600;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
         }
 
         /* Quote */
@@ -196,7 +256,9 @@
             border-radius: 16px;
             padding: 20px;
             margin-bottom: 20px;
-            border-left: 3px solid var(--accent);
+            border-left: 2px solid var(--accent);
+            border: 1px solid var(--line);
+            backdrop-filter: blur(8px);
         }
 
         .quote-text {
@@ -204,6 +266,262 @@
             font-style: italic;
             color: var(--text-muted);
             line-height: 1.6;
+        }
+
+        .profile-card {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid var(--line);
+            backdrop-filter: blur(8px);
+        }
+
+        .profile-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .profile-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .text-action {
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            opacity: 0.8;
+        }
+
+        .text-action:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+
+        .profile-row {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            margin-bottom: 10px;
+        }
+
+        .profile-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.3px;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .profile-value {
+            font-size: 14px;
+            color: var(--text);
+            font-weight: 600;
+            line-height: 1.45;
+        }
+
+        .profile-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .profile-pill {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text);
+            padding: 6px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1;
+        }
+
+        .profile-pill.muted {
+            color: var(--text-muted);
+            border-style: dashed;
+        }
+
+        .onboarding-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.76);
+            backdrop-filter: blur(6px);
+            z-index: 300;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .onboarding-overlay.active {
+            display: flex;
+        }
+
+        .onboarding-panel {
+            width: 100%;
+            max-width: 520px;
+            max-height: 92vh;
+            overflow-y: auto;
+            background: rgba(12, 12, 12, 0.92);
+            border: 1px solid var(--line-strong);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 260;
+            padding: 40px 20px;
+            display: none;
+        }
+
+        .modal-overlay.active {
+            display: block;
+        }
+
+        .onboarding-title {
+            font-family: "Bebas Neue", sans-serif;
+            font-size: 34px;
+            letter-spacing: 1.5px;
+            margin-bottom: 4px;
+        }
+
+        .onboarding-subtitle {
+            color: var(--text-muted);
+            font-size: 13px;
+            line-height: 1.45;
+            margin-bottom: 16px;
+        }
+
+        .onboarding-progress {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--text-muted);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.4px;
+            margin-bottom: 14px;
+            font-weight: 700;
+        }
+
+        .onboarding-step {
+            display: none;
+        }
+
+        .onboarding-step.active {
+            display: block;
+            animation: fadeIn 0.24s ease;
+        }
+
+        .onboarding-step h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+            letter-spacing: 0.3px;
+        }
+
+        .onboarding-step .hint {
+            color: var(--text-muted);
+            font-size: 12px;
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+
+        .choice-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .choice-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .choice-option:hover {
+            border-color: var(--line-strong);
+            background: rgba(255, 255, 255, 0.07);
+        }
+
+        .choice-option input {
+            width: 17px;
+            height: 17px;
+            accent-color: #ffffff;
+            flex-shrink: 0;
+        }
+
+        .choice-option span {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .field-label {
+            display: block;
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.4px;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        .field-input {
+            width: 100%;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text);
+            padding: 12px 14px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        textarea.field-input {
+            min-height: 72px;
+            resize: vertical;
+            line-height: 1.45;
+        }
+
+        .field-input:focus {
+            border-color: var(--line-strong);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .onboarding-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+            justify-content: space-between;
+        }
+
+        .onboarding-actions .btn {
+            margin-bottom: 0;
+            width: auto;
+            flex: 1;
         }
 
         /* Stats */
@@ -219,12 +537,15 @@
             border-radius: 12px;
             padding: 15px;
             text-align: center;
+            border: 1px solid var(--line);
+            backdrop-filter: blur(8px);
         }
 
         .stat-value {
             font-size: 24px;
-            font-weight: 700;
+            font-weight: 800;
             color: var(--accent);
+            letter-spacing: -0.5px;
         }
 
         .stat-label {
@@ -237,7 +558,7 @@
 
         /* Premium Badge */
         .premium-badge {
-            background: linear-gradient(135deg, #FFD700, #FFA500);
+            background: #ffffff;
             color: #000;
             padding: 8px 16px;
             border-radius: 20px;
@@ -262,6 +583,8 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            border: 1px solid var(--line);
+            backdrop-filter: blur(8px);
         }
 
         .habit-info {
@@ -282,7 +605,7 @@
             width: 28px;
             height: 28px;
             border-radius: 50%;
-            border: 2px solid #444;
+            border: 1px solid var(--line-strong);
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -293,6 +616,7 @@
         .habit-check.completed {
             background: var(--success);
             border-color: var(--success);
+            color: #000;
         }
 
         /* Weekly Grid */
@@ -318,6 +642,7 @@
             height: 32px;
             border-radius: 50%;
             background: var(--bg-card);
+            border: 1px solid var(--line);
             margin: 0 auto;
             display: flex;
             align-items: center;
@@ -328,6 +653,7 @@
 
         .day-dot.completed {
             background: var(--success);
+            color: #000;
         }
 
         /* Animations */
@@ -349,6 +675,59 @@
             animation: fadeIn 0.5s ease forwards;
         }
 
+        @media (max-width: 420px) {
+            :root {
+                --photo-size: 118vw;
+                --photo-y: 62%;
+            }
+
+            .container {
+                padding: 16px;
+                padding-bottom: 94px;
+            }
+
+            .logo {
+                font-size: 36px;
+            }
+
+            .streak-number {
+                font-size: 64px;
+            }
+
+            .onboarding-panel {
+                padding: 16px;
+                border-radius: 16px;
+            }
+
+            .onboarding-title {
+                font-size: 30px;
+            }
+
+            .onboarding-actions {
+                flex-direction: column;
+            }
+
+            .onboarding-actions .btn {
+                width: 100%;
+                flex: initial;
+            }
+
+            .mobile-tabs {
+                padding-bottom: 10px;
+            }
+
+            .tab-btn {
+                font-size: 9px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .pulse,
+            .fade-in {
+                animation: none;
+            }
+        }
+
         /* Screens */
         .screen {
             display: none;
@@ -365,7 +744,7 @@
         <div id="main-screen" class="screen active">
             <div class="header">
                 <div class="logo">Сделай или сдохни</div>
-                <div class="tagline">Твой путь к победе</div>
+                <div class="tagline" id="tagline-text">Твой путь к победе</div>
             </div>
 
             <div class="streak-card fade-in">
@@ -389,28 +768,37 @@
                 </div>
             </div>
 
+            <div class="profile-card">
+                <div class="profile-head">
+                    <div class="profile-title">Профиль воина</div>
+                    <button class="text-action" onclick="openOnboarding(true)">Изменить</button>
+                </div>
+                <div class="profile-row">
+                    <div class="profile-label">Имя</div>
+                    <div class="profile-value" id="profile-name">-</div>
+                </div>
+                <div class="profile-row">
+                    <div class="profile-label">Цель на 90 дней</div>
+                    <div class="profile-value" id="profile-goal">-</div>
+                </div>
+                <div class="profile-row">
+                    <div class="profile-label">Твоя причина</div>
+                    <div class="profile-value" id="profile-reason">-</div>
+                </div>
+                <div class="profile-row">
+                    <div class="profile-label">Убрать</div>
+                    <div class="profile-pills" id="profile-quit-list"></div>
+                </div>
+                <div class="profile-row" style="margin-bottom: 0;">
+                    <div class="profile-label">Привить</div>
+                    <div class="profile-pills" id="profile-build-list"></div>
+                </div>
+            </div>
+
             <button class="btn btn-primary" onclick="checkDay()">✅ Отметить день</button>
             <button class="btn btn-danger" onclick="showCraving()">⚠️ Хочу сорваться</button>
             <button class="btn btn-secondary" onclick="completeDailyChallenge()">⚡ Челлендж выполнен</button>
-
-            <div class="menu-grid">
-                <div class="menu-item" onclick="showScreen('habits-screen')">
-                    <div class="menu-icon">💪</div>
-                    <div class="menu-title">Привычки</div>
-                </div>
-                <div class="menu-item" onclick="showScreen('stats-screen')">
-                    <div class="menu-icon">📊</div>
-                    <div class="menu-title">Статистика</div>
-                </div>
-                <div class="menu-item" onclick="showScreen('achievements-screen')">
-                    <div class="menu-icon">🏆</div>
-                    <div class="menu-title">Достижения</div>
-                </div>
-                <div class="menu-item" onclick="showScreen('premium-screen')">
-                    <div class="menu-icon">💎</div>
-                    <div class="menu-title">Premium</div>
-                </div>
-            </div>
+            <button class="btn btn-secondary" onclick="openOnboarding(true)">📝 Обновить профиль</button>
 
             <div class="quote-section">
                 <div class="quote-text" id="daily-quote">"Ты слабак, если сдаешься. Ты воин, если идешь до конца."</div>
@@ -420,7 +808,6 @@
         <!-- Habits Screen -->
         <div id="habits-screen" class="screen">
             <div class="header">
-                <button class="btn btn-secondary" onclick="showScreen('main-screen')" style="margin-bottom: 20px;">← Назад</button>
                 <div class="logo">Привычки</div>
             </div>
 
@@ -434,7 +821,6 @@
         <!-- Stats Screen -->
         <div id="stats-screen" class="screen">
             <div class="header">
-                <button class="btn btn-secondary" onclick="showScreen('main-screen')" style="margin-bottom: 20px;">← Назад</button>
                 <div class="logo">Статистика</div>
             </div>
 
@@ -451,7 +837,6 @@
         <!-- Achievements Screen -->
         <div id="achievements-screen" class="screen">
             <div class="header">
-                <button class="btn btn-secondary" onclick="showScreen('main-screen')" style="margin-bottom: 20px;">← Назад</button>
                 <div class="logo">Достижения</div>
             </div>
 
@@ -490,7 +875,6 @@
         <!-- Premium Screen -->
         <div id="premium-screen" class="screen">
             <div class="header">
-                <button class="btn btn-secondary" onclick="showScreen('main-screen')" style="margin-bottom: 20px;">← Назад</button>
                 <div class="logo" style="color: var(--gold);">Premium</div>
             </div>
 
@@ -508,21 +892,113 @@
 
                 <div style="font-size: 32px; font-weight: 700; margin: 20px 0;">299 ₽/мес</div>
 
-                <button class="btn btn-primary" style="background: linear-gradient(135deg, #FFD700, #FFA500); color: #000;">Купить Premium</button>
+                <button class="btn btn-primary">Купить Premium</button>
             </div>
         </div>
+    </div>
 
-        <!-- Craving Modal -->
-        <div id="craving-modal" class="screen" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.95); z-index: 100; padding: 40px 20px;">
-            <div style="text-align: center;">
-                <div style="font-size: 48px; margin-bottom: 20px;">⚠️</div>
-                <div style="font-size: 24px; font-weight: 700; margin-bottom: 20px; color: var(--accent);">ТЫ ХОЧЕШЬ СОРВАТЬСЯ?</div>
-                <div class="quote-text" id="craving-quote" style="font-size: 16px; margin-bottom: 30px;">"Ты слабак, если сдаешься. Ты воин, если идешь до конца."</div>
-                
-                <button class="btn btn-primary" onclick="openAIChat()">💬 Поговорить с коучем</button>
-                <button class="btn btn-secondary" onclick="closeCraving()">✅ Я справлюсь</button>
-            </div>
+    <div id="craving-modal" class="modal-overlay">
+        <div style="text-align: center;">
+            <div style="font-size: 48px; margin-bottom: 20px;">⚠️</div>
+            <div style="font-size: 24px; font-weight: 700; margin-bottom: 20px; color: var(--accent);">ТЫ ХОЧЕШЬ СОРВАТЬСЯ?</div>
+            <div class="quote-text" id="craving-quote" style="font-size: 16px; margin-bottom: 30px;">"Ты слабак, если сдаешься. Ты воин, если идешь до конца."</div>
+            
+            <button class="btn btn-primary" onclick="openAIChat()">💬 Поговорить с коучем</button>
+            <button class="btn btn-secondary" onclick="closeCraving()">✅ Я справлюсь</button>
         </div>
+    </div>
+
+    <nav class="mobile-tabs">
+        <button type="button" class="tab-btn active" data-screen="main-screen" onclick="showScreen('main-screen')">
+            <span class="tab-icon">🏠</span>
+            <span>Главная</span>
+        </button>
+        <button type="button" class="tab-btn" data-screen="habits-screen" onclick="showScreen('habits-screen')">
+            <span class="tab-icon">💪</span>
+            <span>Привычки</span>
+        </button>
+        <button type="button" class="tab-btn" data-screen="stats-screen" onclick="showScreen('stats-screen')">
+            <span class="tab-icon">📊</span>
+            <span>Стат</span>
+        </button>
+        <button type="button" class="tab-btn" data-screen="achievements-screen" onclick="showScreen('achievements-screen')">
+            <span class="tab-icon">🏅</span>
+            <span>Бейджи</span>
+        </button>
+        <button type="button" class="tab-btn" data-screen="premium-screen" onclick="showScreen('premium-screen')">
+            <span class="tab-icon">💎</span>
+            <span>Premium</span>
+        </button>
+    </nav>
+
+    <div id="onboarding-overlay" class="onboarding-overlay">
+        <form id="onboarding-form" class="onboarding-panel">
+            <div class="onboarding-title">СТАРТОВЫЙ БРИФИНГ</div>
+            <div class="onboarding-subtitle">Отвечай по шагам. Один вопрос за раз, без лишнего шума.</div>
+            <div class="onboarding-progress">
+                <span id="onboarding-step-indicator">Вопрос 1 из 5</span>
+            </div>
+
+            <div class="onboarding-step active" data-step="1">
+                <h3>Как тебя зовут?</h3>
+                <label class="field-label" for="onboarding-name">Имя</label>
+                <input id="onboarding-name" name="name" class="field-input" type="text" maxlength="40" placeholder="Например: Артем" required>
+                <div class="hint">Имя будет видно в твоем профиле воина.</div>
+            </div>
+
+            <div class="onboarding-step" data-step="2">
+                <h3>Какие привычки ты хочешь убрать?</h3>
+                <div class="choice-list">
+                    <label class="choice-option">
+                        <input type="checkbox" name="quit_habits" value="Перестать дрочить">
+                        <span>Перестать дрочить</span>
+                    </label>
+                    <label class="choice-option">
+                        <input type="checkbox" name="quit_habits" value="Перестать курить">
+                        <span>Перестать курить</span>
+                    </label>
+                    <label class="choice-option">
+                        <input type="checkbox" name="quit_habits" value="Перестать пить">
+                        <span>Перестать пить</span>
+                    </label>
+                </div>
+                <div class="hint">Можно выбрать несколько.</div>
+            </div>
+
+            <div class="onboarding-step" data-step="3">
+                <h3>Какие хорошие привычки прививаем?</h3>
+                <div class="choice-list">
+                    <label class="choice-option">
+                        <input type="checkbox" name="build_habits" value="Начать заниматься спортом">
+                        <span>Начать заниматься спортом</span>
+                    </label>
+                    <label class="choice-option">
+                        <input type="checkbox" name="build_habits" value="Правильно питаться">
+                        <span>Правильно питаться</span>
+                    </label>
+                </div>
+                <div class="hint">Эти привычки попадут в твой ежедневный трекер.</div>
+            </div>
+
+            <div class="onboarding-step" data-step="4">
+                <h3>Какая твоя главная цель на 90 дней?</h3>
+                <label class="field-label" for="onboarding-goal">Цель</label>
+                <textarea id="onboarding-goal" name="goal" class="field-input" maxlength="180" placeholder="Например: 90 дней без срывов, -8 кг, стабильный режим"></textarea>
+            </div>
+
+            <div class="onboarding-step" data-step="5">
+                <h3>Почему это для тебя важно?</h3>
+                <label class="field-label" for="onboarding-reason">Причина</label>
+                <textarea id="onboarding-reason" name="reason" class="field-input" maxlength="220" placeholder="Коротко, но честно: ради чего ты это делаешь"></textarea>
+            </div>
+
+            <div class="onboarding-actions">
+                <button type="button" class="btn btn-secondary" id="onboarding-back" onclick="prevOnboardingStep()" style="display: none;">← Назад</button>
+                <button type="button" class="btn btn-secondary" id="onboarding-close" onclick="closeOnboarding()" style="display: none;">Закрыть</button>
+                <button type="button" class="btn btn-primary" id="onboarding-next" onclick="nextOnboardingStep()">Далее →</button>
+                <button type="submit" class="btn btn-primary" id="onboarding-submit" style="display: none;">Сохранить и начать</button>
+            </div>
+        </form>
     </div>
 
     <script>
@@ -561,6 +1037,14 @@
             "Ложись спать до 23:00"
         ];
 
+        const DEFAULT_PROFILE = {
+            name: "",
+            quitHabits: [],
+            buildHabits: [],
+            goal: "",
+            reason: ""
+        };
+
         // Data
         let userData = {
             streak: 0,
@@ -571,8 +1055,13 @@
             isPremium: false,
             challengesCompleted: 0,
             lastCheckDate: null,
-            lastChallengeDate: null
+            lastChallengeDate: null,
+            onboardingCompleted: false,
+            profile: { ...DEFAULT_PROFILE }
         };
+        let onboardingStep = 1;
+        let onboardingCanClose = false;
+        const ONBOARDING_TOTAL_STEPS = 5;
 
         // Quotes
         const quotes = [
@@ -590,26 +1079,235 @@
             return new Date().toISOString().slice(0, 10);
         }
 
+        function parseListInput(value) {
+            if (!value) {
+                return [];
+            }
+
+            return value
+                .split(/[\n,;]+/)
+                .map(item => item.trim())
+                .filter(Boolean)
+                .slice(0, 8);
+        }
+
         function normalizeUserData(raw) {
+            const source = raw && typeof raw === "object" ? raw : {};
+            const profile = source.profile && typeof source.profile === "object" ? source.profile : {};
+            const quitHabits = Array.isArray(profile.quitHabits)
+                ? profile.quitHabits
+                : parseListInput(profile.quitHabits || "");
+            const buildHabits = Array.isArray(profile.buildHabits)
+                ? profile.buildHabits
+                : parseListInput(profile.buildHabits || "");
+
             return {
-                streak: Number(raw.streak) || 0,
-                bestStreak: Number(raw.bestStreak) || 0,
-                totalDays: Number(raw.totalDays) || 0,
-                habits: Array.isArray(raw.habits) ? raw.habits : [],
-                achievements: Array.isArray(raw.achievements) ? raw.achievements : [],
-                isPremium: Boolean(raw.isPremium),
-                challengesCompleted: Number(raw.challengesCompleted) || 0,
-                lastCheckDate: raw.lastCheckDate || null,
-                lastChallengeDate: raw.lastChallengeDate || null
+                streak: Number(source.streak) || 0,
+                bestStreak: Number(source.bestStreak) || 0,
+                totalDays: Number(source.totalDays) || 0,
+                habits: Array.isArray(source.habits) ? source.habits : [],
+                achievements: Array.isArray(source.achievements) ? source.achievements : [],
+                isPremium: Boolean(source.isPremium),
+                challengesCompleted: Number(source.challengesCompleted) || 0,
+                lastCheckDate: source.lastCheckDate || null,
+                lastChallengeDate: source.lastChallengeDate || null,
+                onboardingCompleted: Boolean(source.onboardingCompleted),
+                profile: {
+                    name: String(profile.name || "").trim(),
+                    quitHabits,
+                    buildHabits,
+                    goal: String(profile.goal || "").trim(),
+                    reason: String(profile.reason || "").trim()
+                }
             };
+        }
+
+        function syncHabitsWithProfile() {
+            const buildHabits = userData.profile.buildHabits;
+            if (!buildHabits.length) {
+                return;
+            }
+
+            const existingByName = new Map(
+                userData.habits.map(habit => [habit.name.toLowerCase(), habit])
+            );
+
+            userData.habits = buildHabits.map((name, index) => {
+                const existing = existingByName.get(name.toLowerCase());
+                return {
+                    id: index + 1,
+                    name,
+                    icon: existing ? existing.icon : "💪",
+                    completed: existing ? existing.completed : false
+                };
+            });
+        }
+
+        function renderProfilePills(elementId, items, emptyText) {
+            const container = document.getElementById(elementId);
+            if (!container) {
+                return;
+            }
+
+            container.innerHTML = "";
+            if (!items.length) {
+                const pill = document.createElement("span");
+                pill.className = "profile-pill muted";
+                pill.textContent = emptyText;
+                container.appendChild(pill);
+                return;
+            }
+
+            for (const item of items) {
+                const pill = document.createElement("span");
+                pill.className = "profile-pill";
+                pill.textContent = item;
+                container.appendChild(pill);
+            }
+        }
+
+        function updateProfileUI() {
+            const name = userData.profile.name || "Воин";
+            const goal = userData.profile.goal || "Добавь цель в профиле";
+            const reason = userData.profile.reason || "Определи, ради чего идешь до конца";
+
+            const nameNode = document.getElementById("profile-name");
+            const goalNode = document.getElementById("profile-goal");
+            const reasonNode = document.getElementById("profile-reason");
+            const tagline = document.getElementById("tagline-text");
+
+            if (nameNode) {
+                nameNode.textContent = name;
+            }
+            if (goalNode) {
+                goalNode.textContent = goal;
+            }
+            if (reasonNode) {
+                reasonNode.textContent = reason;
+            }
+            if (tagline) {
+                tagline.textContent = `В строю: ${name}`;
+            }
+
+            renderProfilePills("profile-quit-list", userData.profile.quitHabits, "Добавь, что убираешь");
+            renderProfilePills("profile-build-list", userData.profile.buildHabits, "Добавь, что прививаешь");
+        }
+
+        function fillOnboardingForm() {
+            const profile = userData.profile || DEFAULT_PROFILE;
+            document.getElementById("onboarding-name").value = profile.name || "";
+            document.getElementById("onboarding-goal").value = profile.goal || "";
+            document.getElementById("onboarding-reason").value = profile.reason || "";
+
+            document.querySelectorAll('input[name="quit_habits"]').forEach(input => {
+                input.checked = (profile.quitHabits || []).includes(input.value);
+            });
+            document.querySelectorAll('input[name="build_habits"]').forEach(input => {
+                input.checked = (profile.buildHabits || []).includes(input.value);
+            });
+
+            onboardingStep = 1;
+            updateOnboardingStepUI();
+        }
+
+        function openOnboarding(isEdit = false) {
+            fillOnboardingForm();
+            const overlay = document.getElementById("onboarding-overlay");
+            const closeBtn = document.getElementById("onboarding-close");
+            overlay.classList.add("active");
+            document.body.classList.add("onboarding-open");
+
+            onboardingCanClose = userData.onboardingCompleted || isEdit;
+            closeBtn.style.display = onboardingCanClose ? "block" : "none";
+            const submitBtn = document.getElementById("onboarding-submit");
+            submitBtn.textContent = userData.onboardingCompleted ? "Сохранить изменения" : "Сохранить и начать";
+        }
+
+        function closeOnboarding() {
+            if (!onboardingCanClose && !userData.onboardingCompleted) {
+                return;
+            }
+            const overlay = document.getElementById("onboarding-overlay");
+            overlay.classList.remove("active");
+            document.body.classList.remove("onboarding-open");
+        }
+
+        function updateOnboardingStepUI() {
+            const steps = document.querySelectorAll(".onboarding-step");
+            steps.forEach((step, index) => {
+                step.classList.toggle("active", index + 1 === onboardingStep);
+            });
+
+            document.getElementById("onboarding-step-indicator").textContent = `Вопрос ${onboardingStep} из ${ONBOARDING_TOTAL_STEPS}`;
+            document.getElementById("onboarding-back").style.display = onboardingStep > 1 ? "block" : "none";
+            document.getElementById("onboarding-next").style.display = onboardingStep < ONBOARDING_TOTAL_STEPS ? "block" : "none";
+            document.getElementById("onboarding-submit").style.display = onboardingStep === ONBOARDING_TOTAL_STEPS ? "block" : "none";
+        }
+
+        function prevOnboardingStep() {
+            if (onboardingStep <= 1) {
+                return;
+            }
+            onboardingStep -= 1;
+            updateOnboardingStepUI();
+        }
+
+        function nextOnboardingStep() {
+            if (onboardingStep === 1) {
+                const name = document.getElementById("onboarding-name").value.trim();
+                if (!name) {
+                    alert("Введи имя, чтобы продолжить.");
+                    return;
+                }
+            }
+
+            if (onboardingStep >= ONBOARDING_TOTAL_STEPS) {
+                return;
+            }
+            onboardingStep += 1;
+            updateOnboardingStepUI();
+        }
+
+        function submitOnboarding(event) {
+            event.preventDefault();
+
+            const name = document.getElementById("onboarding-name").value.trim();
+            const quitHabits = Array.from(document.querySelectorAll('input[name="quit_habits"]:checked')).map(input => input.value);
+            const buildHabits = Array.from(document.querySelectorAll('input[name="build_habits"]:checked')).map(input => input.value);
+            const goal = document.getElementById("onboarding-goal").value.trim();
+            const reason = document.getElementById("onboarding-reason").value.trim();
+
+            if (!name) {
+                alert("Укажи имя, чтобы продолжить.");
+                return;
+            }
+
+            userData.profile = {
+                name,
+                quitHabits,
+                buildHabits,
+                goal,
+                reason
+            };
+            userData.onboardingCompleted = true;
+            syncHabitsWithProfile();
+
+            updateUI();
+            generateWeekGrid();
+            closeOnboarding();
         }
 
         // Initialize
         function init() {
             const saved = localStorage.getItem("nofap_user");
             if (saved) {
-                userData = normalizeUserData(JSON.parse(saved));
+                try {
+                    userData = normalizeUserData(JSON.parse(saved));
+                } catch (error) {
+                    userData.profile = { ...DEFAULT_PROFILE };
+                }
             } else {
+                userData.profile = { ...DEFAULT_PROFILE };
                 userData.habits = [
                     { id: 1, name: "Не смотреть порно", icon: "🚫", completed: false },
                     { id: 2, name: "Тренировка", icon: "💪", completed: false },
@@ -618,9 +1316,23 @@
                 ];
             }
 
+            document.getElementById("onboarding-form").addEventListener("submit", submitOnboarding);
+            document.getElementById("onboarding-name").addEventListener("keydown", event => {
+                if (event.key === "Enter" && onboardingStep === 1) {
+                    event.preventDefault();
+                    nextOnboardingStep();
+                }
+            });
+            syncHabitsWithProfile();
             syncAchievements();
             updateUI();
             generateWeekGrid();
+            const activeScreen = document.querySelector(".screen.active");
+            updateTabBar(activeScreen ? activeScreen.id : "main-screen");
+
+            if (!userData.onboardingCompleted) {
+                openOnboarding();
+            }
         }
 
         function achievementProgress(achievement) {
@@ -646,8 +1358,26 @@
             return unlocked;
         }
 
+        function updateTabBar(screenId) {
+            document.querySelectorAll(".tab-btn").forEach(button => {
+                button.classList.toggle("active", button.dataset.screen === screenId);
+            });
+        }
+
         function renderHabits() {
             const list = document.getElementById("habit-list");
+            if (!userData.habits.length) {
+                list.innerHTML = `
+                    <div class="habit-item">
+                        <div class="habit-info">
+                            <div class="habit-icon">📝</div>
+                            <div class="habit-name">Добавь привычки в профиле</div>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
             list.innerHTML = userData.habits.map(habit => `
                 <div class="habit-item">
                     <div class="habit-info">
@@ -690,6 +1420,7 @@
             document.getElementById("challenges-completed").textContent = userData.challengesCompleted;
             document.getElementById("achievements-count").textContent = userData.achievements.length;
 
+            updateProfileUI();
             renderHabits();
             renderAchievements();
             localStorage.setItem("nofap_user", JSON.stringify(userData));
@@ -715,8 +1446,14 @@
 
         // Show screen
         function showScreen(screenId) {
+            const target = document.getElementById(screenId);
+            if (!target) {
+                return;
+            }
+
             document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-            document.getElementById(screenId).classList.add("active");
+            target.classList.add("active");
+            updateTabBar(screenId);
             if (screenId === "stats-screen") {
                 generateWeekGrid();
             }
@@ -797,12 +1534,12 @@
         function showCraving() {
             const quote = quotes[Math.floor(Math.random() * quotes.length)];
             document.getElementById("craving-quote").textContent = `"${quote}"`;
-            showScreen("craving-modal");
+            document.getElementById("craving-modal").classList.add("active");
         }
 
         // Close craving
         function closeCraving() {
-            showScreen("main-screen");
+            document.getElementById("craving-modal").classList.remove("active");
         }
 
         // Open AI chat
@@ -810,6 +1547,7 @@
             if (userData.isPremium) {
                 alert("💬 Скоро: AI чат будет доступен!");
             } else {
+                closeCraving();
                 showScreen("premium-screen");
             }
         }
