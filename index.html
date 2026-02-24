@@ -85,7 +85,7 @@
             transform: translateX(-50%);
             width: min(480px, 100vw);
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: repeat(6, 1fr);
             gap: 0;
             padding: 8px 10px 12px;
             background: rgba(8, 8, 8, 0.86);
@@ -411,6 +411,49 @@
             margin-bottom: 16px;
         }
 
+        .coach-intro {
+            border: 1px solid var(--line-strong);
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.04);
+            padding: 12px;
+            margin-bottom: 14px;
+        }
+
+        .coach-intro-head {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .coach-avatar {
+            width: 180px;
+            height: 220px;
+            border-radius: 12px;
+            object-fit: cover;
+            object-position: center top;
+            border: 1px solid var(--line-strong);
+            filter: grayscale(1) contrast(1.1);
+            flex-shrink: 0;
+        }
+
+        .coach-intro-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.4px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        .coach-intro-text {
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--text);
+            font-weight: 600;
+        }
+
         .onboarding-progress {
             display: flex;
             align-items: center;
@@ -477,6 +520,16 @@
         .choice-option span {
             font-size: 14px;
             font-weight: 600;
+        }
+
+        .habit-block {
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px solid var(--line);
+        }
+
+        .habit-custom {
+            margin-top: 10px;
         }
 
         .field-label {
@@ -744,7 +797,7 @@
         <div id="main-screen" class="screen active">
             <div class="header">
                 <div class="logo">Сделай или сдохни</div>
-                <div class="tagline" id="tagline-text">Твой путь к победе</div>
+                <div class="tagline" id="tagline-text">Отказ от дрочки и дешевого дофамина</div>
             </div>
 
             <div class="streak-card fade-in">
@@ -768,37 +821,9 @@
                 </div>
             </div>
 
-            <div class="profile-card">
-                <div class="profile-head">
-                    <div class="profile-title">Профиль воина</div>
-                    <button class="text-action" onclick="openOnboarding(true)">Изменить</button>
-                </div>
-                <div class="profile-row">
-                    <div class="profile-label">Имя</div>
-                    <div class="profile-value" id="profile-name">-</div>
-                </div>
-                <div class="profile-row">
-                    <div class="profile-label">Цель на 90 дней</div>
-                    <div class="profile-value" id="profile-goal">-</div>
-                </div>
-                <div class="profile-row">
-                    <div class="profile-label">Твоя причина</div>
-                    <div class="profile-value" id="profile-reason">-</div>
-                </div>
-                <div class="profile-row">
-                    <div class="profile-label">Убрать</div>
-                    <div class="profile-pills" id="profile-quit-list"></div>
-                </div>
-                <div class="profile-row" style="margin-bottom: 0;">
-                    <div class="profile-label">Привить</div>
-                    <div class="profile-pills" id="profile-build-list"></div>
-                </div>
-            </div>
-
             <button class="btn btn-primary" onclick="checkDay()">✅ Отметить день</button>
             <button class="btn btn-danger" onclick="showCraving()">⚠️ Хочу сорваться</button>
             <button class="btn btn-secondary" onclick="completeDailyChallenge()">⚡ Челлендж выполнен</button>
-            <button class="btn btn-secondary" onclick="openOnboarding(true)">📝 Обновить профиль</button>
 
             <div class="quote-section">
                 <div class="quote-text" id="daily-quote">"Ты слабак, если сдаешься. Ты воин, если идешь до конца."</div>
@@ -895,6 +920,34 @@
                 <button class="btn btn-primary">Купить Premium</button>
             </div>
         </div>
+
+        <!-- Profile Screen -->
+        <div id="profile-screen" class="screen">
+            <div class="header">
+                <div class="logo">Профиль</div>
+            </div>
+
+            <div class="profile-card">
+                <div class="profile-head">
+                    <div class="profile-title">Профиль воина</div>
+                    <button class="text-action" onclick="openOnboarding(true)">Изменить</button>
+                </div>
+                <div class="profile-row">
+                    <div class="profile-label">Имя</div>
+                    <div class="profile-value" id="profile-name">-</div>
+                </div>
+                <div class="profile-row">
+                    <div class="profile-label">Цель</div>
+                    <div class="profile-value" id="profile-goal">-</div>
+                </div>
+                <div class="profile-row" style="margin-bottom: 0;">
+                    <div class="profile-label">Срок</div>
+                    <div class="profile-value" id="profile-duration">-</div>
+                </div>
+            </div>
+
+            <button class="btn btn-secondary" onclick="openOnboarding(true)">📝 Обновить профиль</button>
+        </div>
     </div>
 
     <div id="craving-modal" class="modal-overlay">
@@ -925,6 +978,10 @@
             <span class="tab-icon">🏅</span>
             <span>Бейджи</span>
         </button>
+        <button type="button" class="tab-btn" data-screen="profile-screen" onclick="showScreen('profile-screen')">
+            <span class="tab-icon">👤</span>
+            <span>Профиль</span>
+        </button>
         <button type="button" class="tab-btn" data-screen="premium-screen" onclick="showScreen('premium-screen')">
             <span class="tab-icon">💎</span>
             <span>Premium</span>
@@ -933,63 +990,91 @@
 
     <div id="onboarding-overlay" class="onboarding-overlay">
         <form id="onboarding-form" class="onboarding-panel">
-            <div class="onboarding-title">СТАРТОВЫЙ БРИФИНГ</div>
-            <div class="onboarding-subtitle">Отвечай по шагам. Один вопрос за раз, без лишнего шума.</div>
+            <div class="onboarding-title">GOGGINS MODE</div>
+            <div class="onboarding-subtitle">Жесткий режим дисциплины. Два вопроса и четкая цель на 3-4 месяца.</div>
+            <div class="coach-intro">
+                <div class="coach-intro-head">
+                    <img class="coach-avatar" src="https://i.pinimg.com/736x/14/f5/a8/14f5a84273fc56e851077f7b923e2029.jpg" alt="David Goggins">
+                    <div class="coach-intro-label">David Goggins</div>
+                </div>
+                <div class="coach-intro-text">"Привет, боец. Если ты хочешь отказаться от дрочки и дешевого дофамина - ты по адресу. Начнем с твоего имени."</div>
+            </div>
             <div class="onboarding-progress">
-                <span id="onboarding-step-indicator">Вопрос 1 из 5</span>
+                <span id="onboarding-step-indicator">Вопрос 1 из 2</span>
             </div>
 
             <div class="onboarding-step active" data-step="1">
-                <h3>Как тебя зовут?</h3>
+                <h3>Как тебя зовут, боец?</h3>
                 <label class="field-label" for="onboarding-name">Имя</label>
                 <input id="onboarding-name" name="name" class="field-input" type="text" maxlength="40" placeholder="Например: Артем" required>
-                <div class="hint">Имя будет видно в твоем профиле воина.</div>
+                <div class="hint">С этого имени начинается твой путь без дешевого дофамина.</div>
             </div>
 
             <div class="onboarding-step" data-step="2">
-                <h3>Какие привычки ты хочешь убрать?</h3>
+                <h3>Что выбираешь на 3-4 месяца?</h3>
+                <label class="field-label">Направление</label>
                 <div class="choice-list">
                     <label class="choice-option">
-                        <input type="checkbox" name="quit_habits" value="Перестать дрочить">
-                        <span>Перестать дрочить</span>
+                        <input type="radio" name="track_type" value="quit">
+                        <span>Отказаться от вредной привычки</span>
                     </label>
                     <label class="choice-option">
-                        <input type="checkbox" name="quit_habits" value="Перестать курить">
-                        <span>Перестать курить</span>
-                    </label>
-                    <label class="choice-option">
-                        <input type="checkbox" name="quit_habits" value="Перестать пить">
-                        <span>Перестать пить</span>
+                        <input type="radio" name="track_type" value="build">
+                        <span>Привить хорошую привычку</span>
                     </label>
                 </div>
-                <div class="hint">Можно выбрать несколько.</div>
-            </div>
 
-            <div class="onboarding-step" data-step="3">
-                <h3>Какие хорошие привычки прививаем?</h3>
-                <div class="choice-list">
-                    <label class="choice-option">
-                        <input type="checkbox" name="build_habits" value="Начать заниматься спортом">
-                        <span>Начать заниматься спортом</span>
-                    </label>
-                    <label class="choice-option">
-                        <input type="checkbox" name="build_habits" value="Правильно питаться">
-                        <span>Правильно питаться</span>
-                    </label>
+                <div id="quit-habits-block" class="habit-block" style="display: none;">
+                    <label class="field-label">Вредные привычки</label>
+                    <div class="choice-list">
+                        <label class="choice-option">
+                            <input type="radio" name="quit_habit" value="smoking">
+                            <span>Отказ от курения</span>
+                        </label>
+                        <label class="choice-option">
+                            <input type="radio" name="quit_habit" value="alcohol">
+                            <span>Отказ от алкоголя</span>
+                        </label>
+                        <label class="choice-option">
+                            <input type="radio" name="quit_habit" value="fap">
+                            <span>Отказ от дрочки</span>
+                        </label>
+                        <label class="choice-option">
+                            <input type="radio" name="quit_habit" value="other">
+                            <span>Другое</span>
+                        </label>
+                    </div>
+                    <div class="habit-custom">
+                        <input id="quit-habit-custom" class="field-input" type="text" maxlength="80" placeholder="Какая вредная привычка?" style="display: none;">
+                    </div>
                 </div>
-                <div class="hint">Эти привычки попадут в твой ежедневный трекер.</div>
-            </div>
 
-            <div class="onboarding-step" data-step="4">
-                <h3>Какая твоя главная цель на 90 дней?</h3>
-                <label class="field-label" for="onboarding-goal">Цель</label>
-                <textarea id="onboarding-goal" name="goal" class="field-input" maxlength="180" placeholder="Например: 90 дней без срывов, -8 кг, стабильный режим"></textarea>
-            </div>
+                <div id="build-habits-block" class="habit-block" style="display: none;">
+                    <label class="field-label">Хорошие привычки</label>
+                    <div class="choice-list">
+                        <label class="choice-option">
+                            <input type="radio" name="build_habit" value="reading">
+                            <span>Начать читать</span>
+                        </label>
+                        <label class="choice-option">
+                            <input type="radio" name="build_habit" value="sport">
+                            <span>Начать заниматься спортом</span>
+                        </label>
+                        <label class="choice-option">
+                            <input type="radio" name="build_habit" value="nutrition">
+                            <span>Начать правильно питаться</span>
+                        </label>
+                        <label class="choice-option">
+                            <input type="radio" name="build_habit" value="other">
+                            <span>Другое</span>
+                        </label>
+                    </div>
+                    <div class="habit-custom">
+                        <input id="build-habit-custom" class="field-input" type="text" maxlength="80" placeholder="Какую хорошую привычку привить?" style="display: none;">
+                    </div>
+                </div>
 
-            <div class="onboarding-step" data-step="5">
-                <h3>Почему это для тебя важно?</h3>
-                <label class="field-label" for="onboarding-reason">Причина</label>
-                <textarea id="onboarding-reason" name="reason" class="field-input" maxlength="220" placeholder="Коротко, но честно: ради чего ты это делаешь"></textarea>
+                <div class="hint">Основная концепция: за 3-4 месяца убрать или привить привычку.</div>
             </div>
 
             <div class="onboarding-actions">
@@ -1001,6 +1086,7 @@
         </form>
     </div>
 
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         const ACHIEVEMENT_CATALOG = [
             { id: "streak_1", name: "Первый шаг", icon: "🎯", requirement: 1, type: "streak" },
@@ -1037,12 +1123,57 @@
             "Ложись спать до 23:00"
         ];
 
+        const PATH_OPTIONS = {
+            tyler: {
+                name: "Путь Tyler (лайт)",
+                description: "Лайтовый режим с низкой нагрузкой. Без перегруза, но прогресс медленнее."
+            },
+            ronaldo: {
+                name: "Путь Cristiano Ronaldo (средний)",
+                description: "Средний, самый оптимальный режим. Баланс дисциплины и устойчивости."
+            },
+            goggins: {
+                name: "Путь David Goggins (супер хард)",
+                description: "Максимальная дисциплина и нагрузка. Быстро и жестко, без оправданий."
+            }
+        };
+
+        const DURATION_OPTIONS = {
+            "30d": "30 дней",
+            "90d": "90 дней",
+            "180d": "6 месяцев",
+            "365d": "1 год",
+            custom: "Свой срок"
+        };
+
+        const QUIT_HABIT_OPTIONS = {
+            smoking: "Отказ от курения",
+            alcohol: "Отказ от алкоголя",
+            fap: "Отказ от дрочки",
+            other: "Другое"
+        };
+
+        const BUILD_HABIT_OPTIONS = {
+            reading: "Начать читать",
+            sport: "Начать заниматься спортом",
+            nutrition: "Начать правильно питаться",
+            other: "Другое"
+        };
+
+        const DEFAULT_GOAL_TEXT = "Фокус на привычках";
+        const DEFAULT_PATH_KEY = "ronaldo";
+        const DEFAULT_DURATION_KEY = "custom";
+        const DEFAULT_DURATION_TEXT = "120 дней";
+
         const DEFAULT_PROFILE = {
             name: "",
-            quitHabits: [],
-            buildHabits: [],
-            goal: "",
-            reason: ""
+            goal: DEFAULT_GOAL_TEXT,
+            pathKey: DEFAULT_PATH_KEY,
+            durationKey: DEFAULT_DURATION_KEY,
+            customDuration: DEFAULT_DURATION_TEXT,
+            trackType: "",
+            habitKey: "",
+            customHabit: ""
         };
 
         // Data
@@ -1061,7 +1192,7 @@
         };
         let onboardingStep = 1;
         let onboardingCanClose = false;
-        const ONBOARDING_TOTAL_STEPS = 5;
+        const ONBOARDING_TOTAL_STEPS = 2;
 
         // Quotes
         const quotes = [
@@ -1079,27 +1210,43 @@
             return new Date().toISOString().slice(0, 10);
         }
 
-        function parseListInput(value) {
-            if (!value) {
-                return [];
+        function getTelegramWebApp() {
+            if (window.Telegram && window.Telegram.WebApp) {
+                return window.Telegram.WebApp;
             }
+            return null;
+        }
 
-            return value
-                .split(/[\n,;]+/)
-                .map(item => item.trim())
-                .filter(Boolean)
-                .slice(0, 8);
+        function getPathName(pathKey) {
+            return PATH_OPTIONS[pathKey] ? PATH_OPTIONS[pathKey].name : "-";
+        }
+
+        function getDurationLabel(durationKey, customDuration = "") {
+            if (durationKey === "custom") {
+                return customDuration || "Свой срок";
+            }
+            return DURATION_OPTIONS[durationKey] || "-";
         }
 
         function normalizeUserData(raw) {
             const source = raw && typeof raw === "object" ? raw : {};
             const profile = source.profile && typeof source.profile === "object" ? source.profile : {};
-            const quitHabits = Array.isArray(profile.quitHabits)
-                ? profile.quitHabits
-                : parseListInput(profile.quitHabits || "");
-            const buildHabits = Array.isArray(profile.buildHabits)
-                ? profile.buildHabits
-                : parseListInput(profile.buildHabits || "");
+
+            let pathKey = String(profile.pathKey || "").trim();
+            if (!PATH_OPTIONS[pathKey]) {
+                pathKey = DEFAULT_PATH_KEY;
+            }
+
+            let durationKey = String(profile.durationKey || "").trim();
+            if (!DURATION_OPTIONS[durationKey]) {
+                durationKey = DEFAULT_DURATION_KEY;
+            }
+
+            const goal = String(profile.goal || "").trim() || DEFAULT_GOAL_TEXT;
+            const trackType = String(profile.trackType || "").trim();
+            const habitKey = String(profile.habitKey || "").trim();
+            const customHabit = String(profile.customHabit || "").trim();
+            const customDuration = String(profile.customDuration || "").trim() || DEFAULT_DURATION_TEXT;
 
             return {
                 streak: Number(source.streak) || 0,
@@ -1114,66 +1261,85 @@
                 onboardingCompleted: Boolean(source.onboardingCompleted),
                 profile: {
                     name: String(profile.name || "").trim(),
-                    quitHabits,
-                    buildHabits,
-                    goal: String(profile.goal || "").trim(),
-                    reason: String(profile.reason || "").trim()
+                    goal,
+                    pathKey,
+                    durationKey,
+                    customDuration,
+                    trackType,
+                    habitKey,
+                    customHabit
                 }
             };
         }
 
-        function syncHabitsWithProfile() {
-            const buildHabits = userData.profile.buildHabits;
-            if (!buildHabits.length) {
-                return;
+        function getHabitLabel(trackType, habitKey, customHabit = "") {
+            if (habitKey === "other") {
+                return customHabit.trim();
             }
-
-            const existingByName = new Map(
-                userData.habits.map(habit => [habit.name.toLowerCase(), habit])
-            );
-
-            userData.habits = buildHabits.map((name, index) => {
-                const existing = existingByName.get(name.toLowerCase());
-                return {
-                    id: index + 1,
-                    name,
-                    icon: existing ? existing.icon : "💪",
-                    completed: existing ? existing.completed : false
-                };
-            });
+            if (trackType === "quit") {
+                return QUIT_HABIT_OPTIONS[habitKey] || "";
+            }
+            if (trackType === "build") {
+                return BUILD_HABIT_OPTIONS[habitKey] || "";
+            }
+            return "";
         }
 
-        function renderProfilePills(elementId, items, emptyText) {
-            const container = document.getElementById(elementId);
-            if (!container) {
+        function buildGoalText(trackType, habitLabel) {
+            if (!habitLabel) {
+                return DEFAULT_GOAL_TEXT;
+            }
+            if (trackType === "quit") {
+                return `Убрать вредную привычку: ${habitLabel}`;
+            }
+            if (trackType === "build") {
+                return `Привить хорошую привычку: ${habitLabel}`;
+            }
+            return DEFAULT_GOAL_TEXT;
+        }
+
+        function ensureDefaultHabits() {
+            if (Array.isArray(userData.habits) && userData.habits.length > 0) {
                 return;
             }
 
-            container.innerHTML = "";
-            if (!items.length) {
-                const pill = document.createElement("span");
-                pill.className = "profile-pill muted";
-                pill.textContent = emptyText;
-                container.appendChild(pill);
+            userData.habits = [
+                { id: 1, name: "Не смотреть порно", icon: "🚫", completed: false },
+                { id: 2, name: "Тренировка", icon: "💪", completed: false },
+                { id: 3, name: "Медитация", icon: "🧘", completed: false },
+                { id: 4, name: "Холодный душ", icon: "🚿", completed: false }
+            ];
+        }
+
+        function syncHabitsToProfileFocus() {
+            const profile = userData.profile || {};
+            const habitLabel = getHabitLabel(profile.trackType, profile.habitKey, profile.customHabit || "");
+            if (!habitLabel) {
                 return;
             }
 
-            for (const item of items) {
-                const pill = document.createElement("span");
-                pill.className = "profile-pill";
-                pill.textContent = item;
-                container.appendChild(pill);
-            }
+            const habitName = profile.trackType === "quit" ? `Без: ${habitLabel}` : habitLabel;
+            const habitIcon = profile.trackType === "quit" ? "🚫" : "🌱";
+            const completed = userData.habits[0] ? Boolean(userData.habits[0].completed) : false;
+
+            userData.habits = [
+                {
+                    id: 1,
+                    name: habitName,
+                    icon: habitIcon,
+                    completed
+                }
+            ];
         }
 
         function updateProfileUI() {
             const name = userData.profile.name || "Воин";
-            const goal = userData.profile.goal || "Добавь цель в профиле";
-            const reason = userData.profile.reason || "Определи, ради чего идешь до конца";
+            const goal = userData.profile.goal || DEFAULT_GOAL_TEXT;
+            const duration = getDurationLabel(userData.profile.durationKey || DEFAULT_DURATION_KEY, userData.profile.customDuration || DEFAULT_DURATION_TEXT);
 
             const nameNode = document.getElementById("profile-name");
             const goalNode = document.getElementById("profile-goal");
-            const reasonNode = document.getElementById("profile-reason");
+            const durationNode = document.getElementById("profile-duration");
             const tagline = document.getElementById("tagline-text");
 
             if (nameNode) {
@@ -1182,32 +1348,54 @@
             if (goalNode) {
                 goalNode.textContent = goal;
             }
-            if (reasonNode) {
-                reasonNode.textContent = reason;
+            if (durationNode) {
+                durationNode.textContent = duration;
             }
             if (tagline) {
                 tagline.textContent = `В строю: ${name}`;
             }
-
-            renderProfilePills("profile-quit-list", userData.profile.quitHabits, "Добавь, что убираешь");
-            renderProfilePills("profile-build-list", userData.profile.buildHabits, "Добавь, что прививаешь");
         }
 
         function fillOnboardingForm() {
             const profile = userData.profile || DEFAULT_PROFILE;
             document.getElementById("onboarding-name").value = profile.name || "";
-            document.getElementById("onboarding-goal").value = profile.goal || "";
-            document.getElementById("onboarding-reason").value = profile.reason || "";
+            document.getElementById("quit-habit-custom").value = profile.trackType === "quit" ? (profile.customHabit || "") : "";
+            document.getElementById("build-habit-custom").value = profile.trackType === "build" ? (profile.customHabit || "") : "";
 
-            document.querySelectorAll('input[name="quit_habits"]').forEach(input => {
-                input.checked = (profile.quitHabits || []).includes(input.value);
+            document.querySelectorAll('input[name="track_type"]').forEach(input => {
+                input.checked = input.value === (profile.trackType || "");
             });
-            document.querySelectorAll('input[name="build_habits"]').forEach(input => {
-                input.checked = (profile.buildHabits || []).includes(input.value);
+            document.querySelectorAll('input[name="quit_habit"]').forEach(input => {
+                input.checked = profile.trackType === "quit" && input.value === (profile.habitKey || "");
+            });
+            document.querySelectorAll('input[name="build_habit"]').forEach(input => {
+                input.checked = profile.trackType === "build" && input.value === (profile.habitKey || "");
             });
 
+            updateTrackSelectionUI();
             onboardingStep = 1;
             updateOnboardingStepUI();
+        }
+
+        function updateTrackSelectionUI() {
+            const trackNode = document.querySelector('input[name="track_type"]:checked');
+            const trackType = trackNode ? trackNode.value : "";
+            const quitBlock = document.getElementById("quit-habits-block");
+            const buildBlock = document.getElementById("build-habits-block");
+
+            quitBlock.style.display = trackType === "quit" ? "block" : "none";
+            buildBlock.style.display = trackType === "build" ? "block" : "none";
+            updateCustomHabitInputVisibility();
+        }
+
+        function updateCustomHabitInputVisibility() {
+            const quitHabitNode = document.querySelector('input[name="quit_habit"]:checked');
+            const buildHabitNode = document.querySelector('input[name="build_habit"]:checked');
+            const quitCustom = document.getElementById("quit-habit-custom");
+            const buildCustom = document.getElementById("build-habit-custom");
+
+            quitCustom.style.display = quitHabitNode && quitHabitNode.value === "other" ? "block" : "none";
+            buildCustom.style.display = buildHabitNode && buildHabitNode.value === "other" ? "block" : "none";
         }
 
         function openOnboarding(isEdit = false) {
@@ -1220,7 +1408,7 @@
             onboardingCanClose = userData.onboardingCompleted || isEdit;
             closeBtn.style.display = onboardingCanClose ? "block" : "none";
             const submitBtn = document.getElementById("onboarding-submit");
-            submitBtn.textContent = userData.onboardingCompleted ? "Сохранить изменения" : "Сохранить и начать";
+            submitBtn.textContent = userData.onboardingCompleted ? "Сохранить изменения" : "Сохранить и отправить";
         }
 
         function closeOnboarding() {
@@ -1252,15 +1440,54 @@
             updateOnboardingStepUI();
         }
 
-        function nextOnboardingStep() {
+        function validateCurrentOnboardingStep() {
             if (onboardingStep === 1) {
                 const name = document.getElementById("onboarding-name").value.trim();
                 if (!name) {
                     alert("Введи имя, чтобы продолжить.");
-                    return;
+                    return false;
                 }
             }
 
+            if (onboardingStep === 2) {
+                const trackNode = document.querySelector('input[name="track_type"]:checked');
+                if (!trackNode) {
+                    alert("Выбери: убрать вредную привычку или привить хорошую.");
+                    return false;
+                }
+
+                if (trackNode.value === "quit") {
+                    const habitNode = document.querySelector('input[name="quit_habit"]:checked');
+                    if (!habitNode) {
+                        alert("Выбери вредную привычку.");
+                        return false;
+                    }
+                    if (habitNode.value === "other" && !document.getElementById("quit-habit-custom").value.trim()) {
+                        alert("Напиши свою вредную привычку в поле 'Другое'.");
+                        return false;
+                    }
+                }
+
+                if (trackNode.value === "build") {
+                    const habitNode = document.querySelector('input[name="build_habit"]:checked');
+                    if (!habitNode) {
+                        alert("Выбери хорошую привычку.");
+                        return false;
+                    }
+                    if (habitNode.value === "other" && !document.getElementById("build-habit-custom").value.trim()) {
+                        alert("Напиши свою хорошую привычку в поле 'Другое'.");
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        function nextOnboardingStep() {
+            if (!validateCurrentOnboardingStep()) {
+                return;
+            }
             if (onboardingStep >= ONBOARDING_TOTAL_STEPS) {
                 return;
             }
@@ -1268,37 +1495,116 @@
             updateOnboardingStepUI();
         }
 
+        function getOnboardingPayload() {
+            const name = document.getElementById("onboarding-name").value.trim();
+            const trackNode = document.querySelector('input[name="track_type"]:checked');
+            const trackType = trackNode ? trackNode.value : "";
+
+            let habitKey = "";
+            let customHabit = "";
+
+            if (trackType === "quit") {
+                const habitNode = document.querySelector('input[name="quit_habit"]:checked');
+                habitKey = habitNode ? habitNode.value : "";
+                customHabit = document.getElementById("quit-habit-custom").value.trim();
+            } else if (trackType === "build") {
+                const habitNode = document.querySelector('input[name="build_habit"]:checked');
+                habitKey = habitNode ? habitNode.value : "";
+                customHabit = document.getElementById("build-habit-custom").value.trim();
+            }
+
+            const habitLabel = getHabitLabel(trackType, habitKey, customHabit);
+            const goal = buildGoalText(trackType, habitLabel);
+            const pathKey = DEFAULT_PATH_KEY;
+            const durationKey = DEFAULT_DURATION_KEY;
+            const customDuration = DEFAULT_DURATION_TEXT;
+            const duration = DEFAULT_DURATION_TEXT;
+
+            return { name, goal, pathKey, durationKey, customDuration, duration, trackType, habitKey, customHabit };
+        }
+
+        function sendGoalSetupToBot(payload) {
+            const tg = getTelegramWebApp();
+            if (!tg || typeof tg.sendData !== "function") {
+                return { sent: false, reason: "not_telegram" };
+            }
+
+            const data = {
+                action: "goal_setup",
+                name: payload.name,
+                goal: payload.goal,
+                path_key: payload.pathKey,
+                duration_key: payload.durationKey,
+                duration: payload.duration,
+                source: "mini_app",
+                submitted_at: new Date().toISOString()
+            };
+
+            try {
+                tg.sendData(JSON.stringify(data));
+                return { sent: true };
+            } catch (error) {
+                return { sent: false, reason: "send_failed", error };
+            }
+        }
+
         function submitOnboarding(event) {
             event.preventDefault();
+            if (!validateCurrentOnboardingStep()) {
+                return;
+            }
 
-            const name = document.getElementById("onboarding-name").value.trim();
-            const quitHabits = Array.from(document.querySelectorAll('input[name="quit_habits"]:checked')).map(input => input.value);
-            const buildHabits = Array.from(document.querySelectorAll('input[name="build_habits"]:checked')).map(input => input.value);
-            const goal = document.getElementById("onboarding-goal").value.trim();
-            const reason = document.getElementById("onboarding-reason").value.trim();
-
-            if (!name) {
-                alert("Укажи имя, чтобы продолжить.");
+            const payload = getOnboardingPayload();
+            if (!payload.name || !payload.trackType || !payload.habitKey) {
+                alert("Заполни все поля корректно.");
                 return;
             }
 
             userData.profile = {
-                name,
-                quitHabits,
-                buildHabits,
-                goal,
-                reason
+                name: payload.name,
+                goal: payload.goal,
+                pathKey: payload.pathKey,
+                durationKey: payload.durationKey,
+                customDuration: payload.customDuration,
+                trackType: payload.trackType,
+                habitKey: payload.habitKey,
+                customHabit: payload.customHabit
             };
             userData.onboardingCompleted = true;
-            syncHabitsWithProfile();
-
+            syncHabitsToProfileFocus();
             updateUI();
             generateWeekGrid();
+
+            const sent = sendGoalSetupToBot(payload);
+            if (sent.sent) {
+                alert("Данные отправлены в бота. План скоро придет в чат Telegram.");
+            } else if (sent.reason === "not_telegram") {
+                alert("Профиль сохранен. Для генерации плана открой Mini App из Telegram-бота.");
+            } else {
+                alert("Профиль сохранен, но отправка в бота не удалась. Попробуй снова.");
+            }
+
             closeOnboarding();
+        }
+
+        function initTelegramWebApp() {
+            const tg = getTelegramWebApp();
+            if (!tg) {
+                return;
+            }
+
+            try {
+                tg.ready();
+                tg.expand();
+            } catch (error) {
+                // noop
+            }
         }
 
         // Initialize
         function init() {
+            initTelegramWebApp();
+
             const saved = localStorage.getItem("nofap_user");
             if (saved) {
                 try {
@@ -1308,13 +1614,9 @@
                 }
             } else {
                 userData.profile = { ...DEFAULT_PROFILE };
-                userData.habits = [
-                    { id: 1, name: "Не смотреть порно", icon: "🚫", completed: false },
-                    { id: 2, name: "Тренировка", icon: "💪", completed: false },
-                    { id: 3, name: "Медитация", icon: "🧘", completed: false },
-                    { id: 4, name: "Холодный душ", icon: "🚿", completed: false }
-                ];
             }
+
+            ensureDefaultHabits();
 
             document.getElementById("onboarding-form").addEventListener("submit", submitOnboarding);
             document.getElementById("onboarding-name").addEventListener("keydown", event => {
@@ -1323,8 +1625,18 @@
                     nextOnboardingStep();
                 }
             });
-            syncHabitsWithProfile();
+            document.querySelectorAll('input[name="track_type"]').forEach(input => {
+                input.addEventListener("change", updateTrackSelectionUI);
+            });
+            document.querySelectorAll('input[name="quit_habit"]').forEach(input => {
+                input.addEventListener("change", updateCustomHabitInputVisibility);
+            });
+            document.querySelectorAll('input[name="build_habit"]').forEach(input => {
+                input.addEventListener("change", updateCustomHabitInputVisibility);
+            });
+
             syncAchievements();
+            syncHabitsToProfileFocus();
             updateUI();
             generateWeekGrid();
             const activeScreen = document.querySelector(".screen.active");
@@ -1371,7 +1683,7 @@
                     <div class="habit-item">
                         <div class="habit-info">
                             <div class="habit-icon">📝</div>
-                            <div class="habit-name">Добавь привычки в профиле</div>
+                            <div class="habit-name">Добавь привычку кнопкой ниже</div>
                         </div>
                     </div>
                 `;
