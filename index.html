@@ -1745,12 +1745,8 @@
             generateWeekGrid();
 
             const sent = sendGoalSetupToBot(payload);
-            if (sent.sent) {
-                alert("Данные отправлены в бота. План скоро придет в чат Telegram.");
-            } else if (sent.reason === "not_telegram") {
-                alert("Профиль сохранен. Для генерации плана открой Mini App из Telegram-бота.");
-            } else {
-                alert("Профиль сохранен, но отправка в бота не удалась. Попробуй снова.");
+            if (!sent.sent && sent.reason === "send_failed") {
+                console.warn("Mini App -> bot sendData failed", sent.error);
             }
 
             closeOnboarding();
@@ -1854,6 +1850,11 @@
                 .replaceAll("'", "&#039;");
         }
 
+        function formatChatText(text) {
+            const safe = escapeHtml(text);
+            return safe.replace(/\*\*(.+?)\*\*/gs, "<strong>$1</strong>");
+        }
+
         function ensureChatWelcome() {
             if (Array.isArray(userData.chatHistory) && userData.chatHistory.length > 0) {
                 return;
@@ -1887,7 +1888,7 @@
             ensureChatWelcome();
             trimChatHistory();
             chatMessages.innerHTML = userData.chatHistory
-                .map(message => `<div class="chat-bubble ${message.role}">${escapeHtml(message.text)}</div>`)
+                .map(message => `<div class="chat-bubble ${message.role}">${formatChatText(message.text)}</div>`)
                 .join("");
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
