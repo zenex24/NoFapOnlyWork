@@ -609,20 +609,6 @@
             margin-top: 5px;
         }
 
-        /* Premium Badge */
-        .premium-badge {
-            background: #ffffff;
-            color: #000;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            display: inline-block;
-            margin-bottom: 15px;
-        }
-
         /* Habit List */
         .habit-list {
             margin-bottom: 20px;
@@ -654,24 +640,6 @@
             font-weight: 600;
         }
 
-        .habit-check {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            border: 1px solid var(--line-strong);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-        }
-
-        .habit-check.completed {
-            background: var(--success);
-            border-color: var(--success);
-            color: #000;
-        }
-
         .chat-shell {
             display: flex;
             flex-direction: column;
@@ -697,8 +665,9 @@
         }
 
         .chat-bubble {
-            max-width: 90%;
-            padding: 10px 12px;
+            width: fit-content;
+            max-width: 82%;
+            padding: 9px 11px;
             border-radius: 14px;
             border: 1px solid var(--line);
             line-height: 1.45;
@@ -709,8 +678,8 @@
 
         .chat-bubble.user {
             align-self: flex-end;
-            background: rgba(255, 255, 255, 0.12);
-            border-color: var(--line-strong);
+            background: rgba(255, 255, 255, 0.09);
+            border-color: rgba(255, 255, 255, 0.12);
         }
 
         .chat-bubble.coach {
@@ -868,7 +837,7 @@
             }
 
             .chat-bubble {
-                max-width: 94%;
+                max-width: 88%;
                 font-size: 13px;
             }
         }
@@ -1262,7 +1231,6 @@
             totalDays: 0,
             habits: [],
             achievements: [],
-            isPremium: false,
             chatHistory: [],
             challengesCompleted: 0,
             lastCheckDate: null,
@@ -1378,7 +1346,6 @@
                 totalDays: Number(source.totalDays) || 0,
                 habits: Array.isArray(source.habits) ? source.habits : [],
                 achievements: Array.isArray(source.achievements) ? source.achievements : [],
-                isPremium: Boolean(source.isPremium),
                 chatHistory,
                 challengesCompleted: Number(source.challengesCompleted) || 0,
                 lastCheckDate: source.lastCheckDate || null,
@@ -1953,36 +1920,6 @@
             input.focus();
         }
 
-        function renderHabits() {
-            const list = document.getElementById("habit-list");
-            if (!list) {
-                return;
-            }
-            if (!userData.habits.length) {
-                list.innerHTML = `
-                    <div class="habit-item">
-                        <div class="habit-info">
-                            <div class="habit-icon">📝</div>
-                            <div class="habit-name">Добавь привычку кнопкой ниже</div>
-                        </div>
-                    </div>
-                `;
-                return;
-            }
-
-            list.innerHTML = userData.habits.map(habit => `
-                <div class="habit-item">
-                    <div class="habit-info">
-                        <div class="habit-icon">${habit.icon}</div>
-                        <div class="habit-name">${habit.name}</div>
-                    </div>
-                    <div class="habit-check ${habit.completed ? "completed" : ""}" onclick="toggleHabit(${habit.id})">
-                        ${habit.completed ? "✓" : ""}
-                    </div>
-                </div>
-            `).join("");
-        }
-
         function renderAchievements() {
             const list = document.getElementById("achievements-list");
             list.innerHTML = ACHIEVEMENT_CATALOG.map(achievement => {
@@ -2013,7 +1950,6 @@
             document.getElementById("achievements-count").textContent = userData.achievements.length;
 
             updateProfileUI();
-            renderHabits();
             renderAchievements();
             renderChatMessages();
             localStorage.setItem("nofap_user", JSON.stringify(userData));
@@ -2103,31 +2039,6 @@
                 text += `\n\n🎉 Новый значок: ${unlocked.map(item => `${item.icon} ${item.name}`).join(", ")}`;
             }
             alert(text);
-        }
-
-        // Toggle habit
-        function toggleHabit(id) {
-            const habit = userData.habits.find(h => h.id === id);
-            if (!habit) {
-                return;
-            }
-
-            habit.completed = !habit.completed;
-            updateUI();
-        }
-
-        // Add habit
-        function addHabit() {
-            const name = prompt("Введи название привычки:");
-            if (!name || !name.trim()) {
-                return;
-            }
-
-            const nextId = userData.habits.length
-                ? Math.max(...userData.habits.map(h => h.id)) + 1
-                : 1;
-            userData.habits.push({ id: nextId, name: name.trim(), icon: "💪", completed: false });
-            updateUI();
         }
 
         // Show craving
