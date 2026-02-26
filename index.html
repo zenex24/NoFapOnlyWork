@@ -1010,6 +1010,8 @@
             </div>
 
             <button class="btn btn-secondary" onclick="openOnboarding(true)">📝 Обновить профиль</button>
+            <button class="btn btn-danger" onclick="resetLocalProgress()">♻️ Сбросить прогресс (локально)</button>
+            <button class="btn btn-danger" onclick="resetAllProgress()">🧨 Сбросить везде (Mini App + бот)</button>
         </div>
     </div>
 
@@ -1235,20 +1237,24 @@
             customHabit: ""
         };
 
+        function createDefaultUserData() {
+            return {
+                streak: 0,
+                bestStreak: 0,
+                totalDays: 0,
+                habits: [],
+                achievements: [],
+                chatHistory: [],
+                challengesCompleted: 0,
+                lastCheckDate: null,
+                lastChallengeDate: null,
+                onboardingCompleted: false,
+                profile: { ...DEFAULT_PROFILE }
+            };
+        }
+
         // Data
-        let userData = {
-            streak: 0,
-            bestStreak: 0,
-            totalDays: 0,
-            habits: [],
-            achievements: [],
-            chatHistory: [],
-            challengesCompleted: 0,
-            lastCheckDate: null,
-            lastChallengeDate: null,
-            onboardingCompleted: false,
-            profile: { ...DEFAULT_PROFILE }
-        };
+        let userData = createDefaultUserData();
         let chatRequestPending = false;
         let onboardingStep = 1;
         let onboardingCanClose = false;
@@ -1653,6 +1659,64 @@
             }
         }
 
+        function sendResetProgressToBot() {
+            const tg = getTelegramWebApp();
+            if (!tg || typeof tg.sendData !== "function") {
+                return { sent: false, reason: "not_telegram" };
+            }
+
+            const data = {
+                action: "reset_progress",
+                source: "mini_app",
+                submitted_at: new Date().toISOString()
+            };
+
+            try {
+                tg.sendData(JSON.stringify(data));
+                return { sent: true };
+            } catch (error) {
+                return { sent: false, reason: "send_failed", error };
+            }
+        }
+
+        function resetLocalProgress(skipConfirm = false) {
+            if (!skipConfirm) {
+                const ok = window.confirm("Сбросить локальный прогресс Mini App? Действие нельзя отменить.");
+                if (!ok) {
+                    return;
+                }
+            }
+
+            userData = createDefaultUserData();
+            ensureDefaultHabits();
+            syncHabitsToProfileFocus();
+            syncAchievements();
+            trimChatHistory();
+            chatRequestPending = false;
+            updateUI();
+            generateWeekGrid();
+            showScreen("main-screen");
+            openOnboarding();
+        }
+
+        function resetAllProgress() {
+            const ok = window.confirm("Сбросить прогресс в Mini App и в Telegram-боте? Действие нельзя отменить.");
+            if (!ok) {
+                return;
+            }
+
+            const sent = sendResetProgressToBot();
+            resetLocalProgress(true);
+
+            if (sent.sent) {
+                alert("Прогресс сброшен. В боте придет подтверждение.");
+            } else if (sent.reason === "not_telegram") {
+                alert("Локальный прогресс сброшен. Для полного сброса открой Mini App из Telegram-бота.");
+            } else {
+                alert("Локальный прогресс сброшен, но отправка в бота не удалась. Повтори позже.");
+            }
+        }
+
         function submitOnboarding(event) {
             event.preventDefault();
             if (!validateCurrentOnboardingStep()) {
@@ -1715,10 +1779,10 @@
                 try {
                     userData = normalizeUserData(JSON.parse(saved));
                 } catch (error) {
-                    userData.profile = { ...DEFAULT_PROFILE };
+                    userData = createDefaultUserData();
                 }
             } else {
-                userData.profile = { ...DEFAULT_PROFILE };
+                userData = createDefaultUserData();
             }
 
             ensureDefaultHabits();
