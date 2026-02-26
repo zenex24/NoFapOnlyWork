@@ -673,13 +673,18 @@
             line-height: 1.45;
             font-size: 14px;
             backdrop-filter: blur(6px);
-            white-space: pre-wrap;
+            white-space: pre-line;
         }
 
         .chat-bubble.user {
             align-self: flex-end;
             background: rgba(255, 255, 255, 0.09);
             border-color: rgba(255, 255, 255, 0.12);
+            max-width: 62%;
+            padding: 6px 8px;
+            font-size: 12px;
+            line-height: 1.3;
+            border-radius: 10px;
         }
 
         .chat-bubble.coach {
@@ -839,6 +844,12 @@
             .chat-bubble {
                 max-width: 88%;
                 font-size: 13px;
+            }
+
+            .chat-bubble.user {
+                max-width: 72%;
+                padding: 6px 8px;
+                font-size: 12px;
             }
         }
 
@@ -1798,11 +1809,9 @@
             }
 
             ensureChatWelcome();
-            chatMessages.innerHTML = userData.chatHistory.map(message => `
-                <div class="chat-bubble ${message.role}">
-                    ${escapeHtml(message.text)}
-                </div>
-            `).join("");
+            chatMessages.innerHTML = userData.chatHistory
+                .map(message => `<div class="chat-bubble ${message.role}">${escapeHtml(message.text)}</div>`)
+                .join("");
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
