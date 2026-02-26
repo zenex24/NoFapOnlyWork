@@ -930,10 +930,10 @@
             </div>
         </div>
 
-        <!-- Stats Screen -->
-        <div id="stats-screen" class="screen">
+        <!-- Plan Screen -->
+        <div id="plan-screen" class="screen">
             <div class="header">
-                <div class="logo">Статистика</div>
+                <div class="logo">План</div>
             </div>
 
             <div class="week-grid" id="week-grid">
@@ -946,10 +946,10 @@
             </div>
         </div>
 
-        <!-- Achievements Screen -->
-        <div id="achievements-screen" class="screen">
+        <!-- Challenges Screen -->
+        <div id="challenges-screen" class="screen">
             <div class="header">
-                <div class="logo">Достижения</div>
+                <div class="logo">Челленджи</div>
             </div>
 
             <div class="habit-list" id="achievements-list">
@@ -1035,13 +1035,13 @@
             <span class="tab-icon">💬</span>
             <span>Чат</span>
         </button>
-        <button type="button" class="tab-btn" data-screen="stats-screen" onclick="showScreen('stats-screen')">
+        <button type="button" class="tab-btn" data-screen="plan-screen" onclick="showScreen('plan-screen')">
             <span class="tab-icon">📊</span>
-            <span>Стат</span>
+            <span>План</span>
         </button>
-        <button type="button" class="tab-btn" data-screen="achievements-screen" onclick="showScreen('achievements-screen')">
-            <span class="tab-icon">🏅</span>
-            <span>Бейджи</span>
+        <button type="button" class="tab-btn" data-screen="challenges-screen" onclick="showScreen('challenges-screen')">
+            <span class="tab-icon">⚡</span>
+            <span>Челленджи</span>
         </button>
         <button type="button" class="tab-btn" data-screen="profile-screen" onclick="showScreen('profile-screen')">
             <span class="tab-icon">👤</span>
@@ -2075,7 +2075,7 @@
             document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
             target.classList.add("active");
             updateTabBar(screenId);
-            if (screenId === "stats-screen") {
+            if (screenId === "plan-screen") {
                 generateWeekGrid();
             }
             if (screenId === "chat-screen") {
