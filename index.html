@@ -676,26 +676,34 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
-            min-height: calc(100vh - 250px);
+            height: calc(100dvh - 240px);
+            min-height: 420px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 12px;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 14px 35px rgba(0, 0, 0, 0.35);
         }
 
         .chat-messages {
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             overflow-y: auto;
-            padding-right: 2px;
+            padding: 4px 2px 8px 0;
+            scroll-behavior: smooth;
         }
 
         .chat-bubble {
-            max-width: 86%;
-            padding: 12px 14px;
+            max-width: 90%;
+            padding: 10px 12px;
             border-radius: 14px;
             border: 1px solid var(--line);
             line-height: 1.45;
             font-size: 14px;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(6px);
             white-space: pre-wrap;
         }
 
@@ -714,6 +722,8 @@
             display: flex;
             gap: 10px;
             align-items: center;
+            padding-top: 6px;
+            border-top: 1px solid var(--line);
         }
 
         .chat-input {
@@ -742,6 +752,7 @@
             font-size: 20px;
             font-weight: 800;
             cursor: pointer;
+            flex-shrink: 0;
         }
 
         .chat-send:disabled {
@@ -849,6 +860,17 @@
             .tab-btn {
                 font-size: 9px;
             }
+
+            .chat-shell {
+                height: calc(100dvh - 220px);
+                min-height: 360px;
+                padding: 10px;
+            }
+
+            .chat-bubble {
+                max-width: 94%;
+                font-size: 13px;
+            }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -910,7 +932,7 @@
         <!-- Chat Screen -->
         <div id="chat-screen" class="screen">
             <div class="header">
-                <div class="logo">Чат с David Goggins</div>
+                <div class="logo">Чат с Goggins</div>
             </div>
 
             <div class="chat-shell">
@@ -1817,7 +1839,7 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
-        async function requestCoachReplyFromApi(message) {
+        async function requestCoachReplyFromApi(message, historySnapshot = []) {
             const apiBase = getMiniAppApiBase();
             if (!apiBase) {
                 throw new Error("api_base_missing");
@@ -1830,7 +1852,7 @@
                 userData.profile.durationKey || DEFAULT_DURATION_KEY,
                 userData.profile.customDuration || DEFAULT_DURATION_TEXT
             );
-            const history = Array.isArray(userData.chatHistory) ? userData.chatHistory.slice(-12) : [];
+            const history = Array.isArray(historySnapshot) ? historySnapshot.slice(-20) : [];
 
             const payload = {
                 message,
@@ -1892,6 +1914,8 @@
                 return;
             }
 
+            const historySnapshot = Array.isArray(userData.chatHistory) ? userData.chatHistory.slice(-20) : [];
+
             chatRequestPending = true;
             if (sendButton) {
                 sendButton.disabled = true;
@@ -1903,7 +1927,7 @@
             updateUI();
 
             try {
-                const reply = await requestCoachReplyFromApi(text);
+                const reply = await requestCoachReplyFromApi(text, historySnapshot);
                 userData.chatHistory[userData.chatHistory.length - 1] = { role: "coach", text: reply };
             } catch (error) {
                 let errorText = "❌ Не удалось получить ответ AI. Проверь, что бот запущен и Mini App API доступен.";
@@ -2135,4 +2159,3 @@
     </script>
 </body>
 </html>
-
