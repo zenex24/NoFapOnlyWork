@@ -1253,6 +1253,8 @@
         let onboardingStep = 1;
         let onboardingCanClose = false;
         const ONBOARDING_TOTAL_STEPS = 2;
+        const MAX_CHAT_MESSAGES = 6;
+        const MAX_CHAT_HISTORY_FOR_AI = 6;
 
         // Quotes
         const quotes = [
@@ -1349,7 +1351,7 @@
                     return { role, text };
                 })
                 .filter(Boolean)
-                .slice(-80);
+                .slice(-MAX_CHAT_MESSAGES);
 
             return {
                 streak: Number(source.streak) || 0,
@@ -1802,6 +1804,16 @@
             ];
         }
 
+        function trimChatHistory() {
+            if (!Array.isArray(userData.chatHistory)) {
+                userData.chatHistory = [];
+                return;
+            }
+            userData.chatHistory = userData.chatHistory
+                .filter(item => item && typeof item.text === "string" && item.text.trim())
+                .slice(-MAX_CHAT_MESSAGES);
+        }
+
         function renderChatMessages() {
             const chatMessages = document.getElementById("chat-messages");
             if (!chatMessages) {
@@ -1809,6 +1821,7 @@
             }
 
             ensureChatWelcome();
+            trimChatHistory();
             chatMessages.innerHTML = userData.chatHistory
                 .map(message => `<div class="chat-bubble ${message.role}">${escapeHtml(message.text)}</div>`)
                 .join("");
@@ -1828,7 +1841,7 @@
                 userData.profile.durationKey || DEFAULT_DURATION_KEY,
                 userData.profile.customDuration || DEFAULT_DURATION_TEXT
             );
-            const history = Array.isArray(historySnapshot) ? historySnapshot.slice(-20) : [];
+            const history = Array.isArray(historySnapshot) ? historySnapshot.slice(-MAX_CHAT_HISTORY_FOR_AI) : [];
 
             const payload = {
                 message,
@@ -1890,7 +1903,9 @@
                 return;
             }
 
-            const historySnapshot = Array.isArray(userData.chatHistory) ? userData.chatHistory.slice(-20) : [];
+            const historySnapshot = Array.isArray(userData.chatHistory)
+                ? userData.chatHistory.slice(-MAX_CHAT_HISTORY_FOR_AI)
+                : [];
 
             chatRequestPending = true;
             if (sendButton) {
@@ -1898,13 +1913,14 @@
             }
             userData.chatHistory.push({ role: "user", text });
             userData.chatHistory.push({ role: "coach", text: "..." });
-            userData.chatHistory = userData.chatHistory.slice(-80);
+            trimChatHistory();
             input.value = "";
             updateUI();
 
             try {
                 const reply = await requestCoachReplyFromApi(text, historySnapshot);
                 userData.chatHistory[userData.chatHistory.length - 1] = { role: "coach", text: reply };
+                trimChatHistory();
             } catch (error) {
                 let errorText = "❌ Не удалось получить ответ AI. Проверь, что бот запущен и Mini App API доступен.";
                 if (error && error.message === "api_base_missing") {
@@ -1918,6 +1934,7 @@
                     role: "coach",
                     text: errorText
                 };
+                trimChatHistory();
             } finally {
                 chatRequestPending = false;
                 if (sendButton) {
@@ -1961,6 +1978,7 @@
             updateProfileUI();
             renderAchievements();
             renderChatMessages();
+            trimChatHistory();
             localStorage.setItem("nofap_user", JSON.stringify(userData));
         }
 
